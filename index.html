@@ -417,27 +417,20 @@ const BLOCK_TYPES = {
 };
 const STATUSES = ["Идея", "В разработке", "Готов", "Идёт набор", "Идёт поток"];
 const LIVE = ["Готов", "Идёт набор", "Идёт поток"];
-const LEGACY_KEY = "piko-ai-dashboard-v1";
-const DRAFT_KEY = "piko-ai-draft-v2";
-const PRIV_KEY = "piko-ai-private-v2";
 
 const DEFAULT = JSON.parse(document.getElementById("default-content").textContent);
 let content = structuredClone(DEFAULT);
 let priv = { done: {}, status: {}, notes: {} };
-const caps = { user: null, artifact: null, assets: null, db: null, privDoc: null };
+const caps = { user: null, artifact: null, assets: null, db: null, privDoc: null, draftDoc: null };
 const isLocal = !window.claude;
 let canEdit = false, ready = false, dirty = false, saving = false;
-let showMode = ssGet("piko-show") === "1";
+let showMode = false;
 let lessonTab = "edit";
 let query = "";
 let draftOffer = null;
 const slideIdx = {};
 
 /* ---------- helpers ---------- */
-function ssGet(k) { try { return sessionStorage.getItem(k); } catch { return null; } }
-function ssSet(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch {} }
-function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
-function lsSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 const uid = () => Math.random().toString(36).slice(2, 8);
@@ -475,37 +468,31 @@ function go(token) {
   if (location.hash.slice(1) === token) render(); else location.hash = token;
 }
 
-/* ---------- private state (progress, statuses, notes) ---------- */
+/* ---------- private state (progress, statuses, notes, theme) — server-side, owner only ---------- */
 let privTimer;
 function savePriv() {
+  if (!caps.privDoc) return;
   clearTimeout(privTimer);
   privTimer = setTimeout(async () => {
-    if (caps.privDoc) {
-      try { await caps.privDoc.set(priv); } catch (e) { toast("Не удалось сохранить личные заметки: " + (e.code || "ошибка")); }
-    } else lsSet(PRIV_KEY, JSON.stringify(priv));
+    try { await caps.privDoc.set(priv); } catch (e) { toast("Не удалось сохранить заметки: " + (e.code || "ошибка")); }
   }, 700);
 }
-function migrateLegacy() {
-  let old; try { old = JSON.parse(lsGet(LEGACY_KEY)); } catch {}
-  if (!old) return false;
-  for (const c of content.courses) {
-    const o = old[c.id]; if (!o) continue;
-    priv.done[c.id] = (o.done || []).map((i) => c.modules[i]?.id).filter(Boolean);
-    if (o.status) priv.status[c.id] = o.status;
-    if (o.notes) priv.notes[c.id] = o.notes;
-  }
-  return true;
-}
 
-function loadLocalPriv() {
-  let saved = null; try { saved = JSON.parse(lsGet(PRIV_KEY)); } catch {}
-  if (saved) priv = { done: {}, status: {}, notes: {}, ...saved }; else migrateLegacy();
+/* ---------- draft autosave — server-side, owner only ---------- */
+let draftTimer, draftWrite = Promise.resolve();
+function saveDraft(data) {
+  if (!caps.draftDoc) return;
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    draftWrite = draftWrite.then(() => caps.draftDoc.set(data)).catch(() => toast("Черновик не сохранился на сервере. Нажмите «Сохранить»."));
+  }, 1500);
 }
+function clearDraft() { saveDraft({ at: 0, content: null }); }
 
 /* ---------- content saving (studio) ---------- */
 function markDirty() {
   dirty = true;
-  lsSet(DRAFT_KEY, JSON.stringify({ at: Date.now(), content }));
+  saveDraft({ at: Date.now(), content });
   paintSave();
 }
 function paintSave() {
@@ -518,17 +505,17 @@ function paintSave() {
 async function saveContent() {
   if (!dirty || saving) return;
   if (!caps.artifact) {
-    toast(isLocal ? "Это локальная копия: изменения хранятся только в этом браузере." : "Сохранение недоступно в этом окне.");
+    toast(isLocal ? "Это локальная копия: сохранение работает только на claude.ai." : "Сохранение недоступно в этом окне.");
     return;
   }
   saving = true; paintSave();
   try {
     await caps.artifact.publish({ "content.json": { content: JSON.stringify(content), contentType: "application/json" } });
-    dirty = false; lsSet(DRAFT_KEY, null);
+    dirty = false; clearDraft();
     toast("Сохранено. Режим показа уже видит изменения.");
   } catch (e) {
     const code = e && e.code;
-    if (code === "conflict") toast("Страница обновилась в другом окне. Черновик сохранён — восстановите его после перезагрузки.");
+    if (code === "conflict") toast("Страница обновилась в другом окне. Черновик сохранён на сервере — восстановите его после перезагрузки.");
     else if (code === "rate_limited") toast("Слишком частые сохранения. Подождите минуту и сохраните снова.");
     else if (["not_writer", "not_granted", "capability_disabled", "not_declared"].includes(code)) toast("Сохранять можно только из вашего аккаунта-владельца.");
     else toast("Не удалось сохранить (" + (code || "ошибка") + "). Изменения остались в черновике.");
@@ -917,11 +904,11 @@ document.addEventListener("click", async (e) => {
   if (act === "theme") {
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "light" : "dark"; lsSet(LEGACY_KEY + "-theme", root.dataset.theme);
+    root.dataset.theme = dark ? "light" : "dark"; if (canEdit) { priv.theme = root.dataset.theme; savePriv(); }
   }
   else if (act === "save") saveContent();
-  else if (act === "enter-show") { showMode = true; ssSet("piko-show", "1"); render(); toast("Режим показа. Вернуться в студию — кнопка с карандашом слева."); }
-  else if (act === "exit-show") { showMode = false; ssSet("piko-show", null); render(); }
+  else if (act === "enter-show") { showMode = true; render(); toast("Режим показа. Вернуться в студию — кнопка с карандашом слева."); }
+  else if (act === "exit-show") { showMode = false; render(); }
   else if (act === "tab") { lessonTab = a.dataset.tab; rerender(); }
   else if (act === "toggle-done") {
     const c = course(a.dataset.c), id = a.dataset.m, d = done(c);
@@ -970,7 +957,7 @@ document.addEventListener("click", async (e) => {
     try { document.fullscreenElement ? await document.exitFullscreen() : await el.requestFullscreen(); } catch { toast("Полноэкранный режим недоступен в этом окне."); }
   }
   else if (act === "draft-restore") { content = draftOffer.content; draftOffer = null; dirty = true; render(); toast("Черновик восстановлен. Не забудьте сохранить."); }
-  else if (act === "draft-drop") { draftOffer = null; lsSet(DRAFT_KEY, null); render(); }
+  else if (act === "draft-drop") { draftOffer = null; clearDraft(); render(); }
 });
 
 function stepSlide(bid, d) {
@@ -1023,8 +1010,7 @@ window.addEventListener("hashchange", () => { render(); scrollTo(0, 0); });
 window.addEventListener("beforeunload", (e) => { if (dirty && mode() === "studio") { e.preventDefault(); e.returnValue = ""; } });
 
 /* ---------- boot ---------- */
-try { const th = lsGet(LEGACY_KEY + "-theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
-if (location.hash === "#show") { showMode = true; ssSet("piko-show", "1"); history.replaceState(null, "", location.pathname + location.search); }
+if (location.hash === "#show") { showMode = true; history.replaceState(null, "", location.pathname + location.search); }
 render();
 
 (async function boot() {
@@ -1035,7 +1021,6 @@ render();
 
   if (isLocal) {
     canEdit = true;
-    loadLocalPriv();
   } else {
     caps.user = await claude.use("user");
     canEdit = caps.user ? await caps.user.canEdit() : false;
@@ -1044,21 +1029,16 @@ render();
       const id = caps.user ? await caps.user.id() : null;
       if (caps.db && id) {
         caps.privDoc = caps.db.doc(`data/users/${id}/piko`);
+        caps.draftDoc = caps.db.doc(`data/users/${id}/draft`);
         try {
-          const snap = await caps.privDoc.get();
-          if (snap.exists) priv = { done: {}, status: {}, notes: {}, ...snap.data() };
-          else if (migrateLegacy()) savePriv();
+          const [ps, ds] = await Promise.all([caps.privDoc.get(), caps.draftDoc.get()]);
+          if (ps.exists) priv = { done: {}, status: {}, notes: {}, ...ps.data() };
+          if (priv.theme) document.documentElement.dataset.theme = priv.theme;
+          const d = ds.exists ? ds.data() : null;
+          if (d && d.content && JSON.stringify(d.content) !== JSON.stringify(content)) draftOffer = d;
         } catch {}
-      } else {
-        loadLocalPriv();
       }
     }
-  }
-  if (canEdit) {
-    try {
-      const d = JSON.parse(lsGet(DRAFT_KEY));
-      if (d && d.content && JSON.stringify(d.content) !== JSON.stringify(content)) draftOffer = d;
-    } catch {}
   }
   ready = true;
   render();
