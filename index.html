@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="ru">
-<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piko AI Курсы</title>
 <meta name="robots" content="noindex, nofollow">
-<title>Piko AI — курсы</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Layout: dark icon rail + white work surface on an orange-backed frame (Kindle palette, course-player layout) */
   :root {
     --page: #e9e9e7;
     --frame: rgba(255,255,255,.55);
@@ -22,34 +22,38 @@
     --orange: #ff9900;
     --orange-soft: #fff1dc;
     --on-orange: #141414;
+    --danger: #d64545;
     --radius: 22px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --page: #0b0b0b; --frame: rgba(255,255,255,.05); --surface: #181818; --soft: #222222;
       --ink: #f2f2f2; --muted: #9a9a9a; --line: #2a2a2a; --side: #000000; --orange-soft: #3a2a10;
+      --danger: #ff7070; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --page: #0b0b0b; --frame: rgba(255,255,255,.05); --surface: #181818; --soft: #222222;
     --ink: #f2f2f2; --muted: #9a9a9a; --line: #2a2a2a; --side: #000000; --orange-soft: #3a2a10;
+    --danger: #ff7070; color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; }
   body {
-    min-height: 100vh; color: var(--ink); background: var(--page);
-    font-family: "Poppins", system-ui, sans-serif; font-size: 14px; line-height: 1.5;
-    padding: 28px; overflow-x: hidden; position: relative;
+    margin: 0; min-height: 100vh; color: var(--ink); background: var(--page);
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5;
+    padding-block: 28px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px));
+    overflow-x: hidden; position: relative;
   }
   body::before {
     content: ""; position: fixed; right: -10vw; top: 18vh; width: 62vw; height: 90vh;
     background: var(--orange); border-radius: 48px 0 0 0; z-index: -1;
   }
   button, select, textarea, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
   svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  img, video, iframe { max-width: 100%; }
 
-  /* Shell */
   .shell {
     max-width: 1320px; margin: 0 auto; padding: 14px; border-radius: 40px;
     background: var(--frame); backdrop-filter: blur(12px); box-shadow: 0 30px 80px rgba(0,0,0,.12);
@@ -61,13 +65,13 @@
     display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 26px 0;
   }
   .avatar {
-    width: 46px; height: 46px; border-radius: 50%; background: var(--orange); color: var(--on-orange);
-    display: grid; place-items: center; flex: none; font-weight: 700; font-size: 18px; border: 3px solid rgba(255,255,255,.15); margin-bottom: 18px;
+    width: 46px; height: 46px; border-radius: 50%; background: var(--orange); color: var(--on-orange); flex: none;
+    display: grid; place-items: center; font-weight: 700; font-size: 18px; border: 3px solid rgba(255,255,255,.15); margin-bottom: 18px;
   }
   nav { display: flex; flex-direction: column; gap: 10px; }
   .nav-btn {
     width: 46px; height: 46px; border-radius: 14px; border: 0; cursor: pointer; background: none; color: rgba(255,255,255,.7);
-    display: grid; place-items: center; position: relative;
+    display: grid; place-items: center; position: relative; flex: none;
   }
   .nav-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
   .nav-btn.active { background: var(--orange); color: var(--on-orange); }
@@ -76,43 +80,50 @@
     font-size: 12px; padding: 5px 10px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 5;
   }
   .nav-btn:hover .tip { opacity: 1; }
-  .side-bottom { margin-top: auto; }
+  .side-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
   .side-bottom .nav-btn { background: rgba(255,153,0,.18); color: var(--orange); }
 
   main { background: var(--surface); padding: 30px 36px 40px; min-width: 0; }
 
-  /* Topbar */
-  .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
-  .brand { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; margin-right: 10px; white-space: nowrap; }
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .brand { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; margin-right: 6px; white-space: nowrap; display: flex; align-items: center; gap: 10px; }
   .brand i { color: var(--orange); font-style: normal; }
+  .mode-chip { font-size: 11px; font-weight: 600; border-radius: 99px; padding: 3px 10px; background: var(--soft); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .mode-chip.studio { background: var(--orange-soft); color: var(--ink); }
   .search {
-    flex: 1; display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: 14px; padding: 0 16px; height: 48px; color: var(--muted);
+    flex: 1; min-width: 180px; display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: 14px; padding: 0 16px; height: 48px; color: var(--muted);
   }
   .search input { border: 0; background: none; outline: none; width: 100%; color: var(--ink); }
-  .icon-btn {
-    width: 48px; height: 48px; border-radius: 14px; border: 0; background: var(--orange); color: var(--on-orange);
-    display: grid; place-items: center; cursor: pointer; flex: none;
-  }
 
-  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+  .btn {
+    height: 44px; padding: 0 16px; border-radius: 13px; border: 0; cursor: pointer; font-weight: 600; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 8px; background: var(--soft); color: var(--ink); white-space: nowrap;
+  }
+  .btn svg { width: 18px; height: 18px; }
+  .btn:hover { filter: brightness(.97); }
+  .btn.primary { background: var(--orange); color: var(--on-orange); }
+  .btn.dark { background: var(--side); color: #fff; }
+  .btn.sm { height: 34px; padding: 0 12px; border-radius: 10px; font-size: 12px; }
+  .btn.danger { color: var(--danger); }
+  .btn.armed { background: var(--danger); color: #fff; }
+  .btn[disabled] { opacity: .5; cursor: default; }
+  .save-state { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
   .muted { color: var(--muted); }
-  .section-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 16px; }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 16px; }
   .section-head h2 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
 
-  /* Covers */
-  .cover {
-    position: relative; border-radius: 16px; overflow: hidden; color: #fff; display: grid; place-items: center;
-    background: var(--g);
-  }
+  .cover { position: relative; border-radius: 16px; overflow: hidden; color: #fff; display: grid; place-items: center; background: var(--g); }
   .cover svg { width: 44%; height: 44%; stroke-width: 1.3; opacity: .95; }
-  .cover::after {
-    content: ""; position: absolute; inset: 0;
-    background: radial-gradient(circle at 80% 15%, rgba(255,255,255,.28), transparent 45%);
-  }
+  .cover::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 15%, rgba(255,255,255,.28), transparent 45%); pointer-events: none; }
+
+  .banner { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; background: var(--orange-soft); border-radius: 16px; padding: 12px 16px; margin-bottom: 20px; }
+  .banner span { flex: 1; min-width: 200px; }
 
   /* Overview */
   .ov-grid { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 28px; }
-  .continue { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 34px; }
+  .continue { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 34px; padding-top: 10px; }
   .cont-card {
     display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 20px; border: 0; cursor: pointer; text-align: left;
     background: var(--side); color: #fff; min-width: 0; transition: transform .2s;
@@ -125,9 +136,8 @@
   .mini-bar span { display: block; height: 100%; background: var(--orange); }
 
   .courses { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; }
-  .course { border: 0; background: none; padding: 0; cursor: pointer; text-align: left; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; }
-  .course .cover { width: 100%; }
-  .course .cover { aspect-ratio: 3 / 4; box-shadow: 0 12px 24px rgba(0,0,0,.14); transition: transform .2s; }
+  .course { border: 0; background: none; padding: 0; cursor: pointer; text-align: left; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+  .course .cover { width: 100%; aspect-ratio: 3 / 4; box-shadow: 0 12px 24px rgba(0,0,0,.14); transition: transform .2s; }
   .course:hover .cover { transform: translateY(-4px); }
   .course b { display: block; font-weight: 600; margin-top: 12px; line-height: 1.3; }
   .course small { display: block; color: var(--muted); font-size: 12px; margin: 2px 0 8px; }
@@ -145,17 +155,25 @@
   .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 26px; font-weight: 700; }
   .ring-cap { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
 
-  /* Detail */
-  .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; }
-  .hero { aspect-ratio: 16 / 7.5; border-radius: 20px; display: block; place-items: unset; }
+  /* Show-mode landing */
+  .show-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: center; margin-bottom: 34px; }
+  .show-hero h1 { font-size: clamp(30px, 4vw, 48px); line-height: 1.05; letter-spacing: -0.03em; }
+  .show-hero p { color: var(--muted); max-width: 46ch; margin: 12px 0 0; font-size: 15px; }
+  .cover-stack { display: flex; gap: 12px; justify-content: flex-end; }
+  .cover-stack .cover { width: 22%; aspect-ratio: 3 / 4; box-shadow: 0 14px 28px rgba(0,0,0,.18); }
+  .cover-stack .cover:nth-child(even) { transform: translateY(18px); }
+
+  /* Course detail */
+  .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 36px; }
+  .hero { aspect-ratio: 16 / 7.5; border-radius: 20px; display: block; max-width: 100%; }
   .hero .hero-icon { position: absolute; right: 7%; top: 50%; transform: translateY(-58%); width: 34%; height: auto; aspect-ratio: 1; opacity: .9; stroke-width: 1; }
   .hero .hero-text { position: absolute; left: 6%; top: 14%; max-width: 55%; z-index: 1; }
   .hero .hero-text span { font-size: 12px; background: rgba(255,255,255,.18); padding: 4px 10px; border-radius: 99px; }
-  .hero .hero-text h2 { font-size: clamp(20px, 2.6vw, 32px); line-height: 1.15; margin: 12px 0 0; font-weight: 600; letter-spacing: -0.02em; }
+  .hero .hero-text h2 { font-size: clamp(20px, 2.6vw, 32px); line-height: 1.15; margin: 12px 0 0; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
   .player {
     position: absolute; left: 6%; right: 6%; bottom: 7%; z-index: 1;
     display: flex; align-items: center; gap: 12px; background: rgba(20,20,20,.55); backdrop-filter: blur(6px);
-    border-radius: 10px; padding: 8px 14px; font-size: 12px;
+    border-radius: 10px; padding: 8px 14px; font-size: 12px; border: 0; color: #fff; cursor: pointer; text-align: left;
   }
   .player svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
   .player .track { flex: 1; height: 16px; border-radius: 4px; background: rgba(255,255,255,.18); overflow: hidden; }
@@ -165,37 +183,114 @@
   .now .badge-ico { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--orange); display: grid; place-items: center; color: var(--orange); font-weight: 700; flex: none; }
   .now h3 { margin: 0; font-size: 19px; font-weight: 500; }
   .now small { color: var(--muted); }
-  .now .actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
-  .now select { background: var(--orange-soft); border: 0; border-radius: 10px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
-  .about { color: var(--muted); font-size: 13px; padding-top: 16px; }
+  .now .actions { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  select.pill-select { background: var(--orange-soft); border: 0; border-radius: 10px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
   .facts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-  .fact { background: var(--soft); border-radius: 12px; padding: 10px 14px; font-size: 12px; }
+  .fact { background: var(--soft); border-radius: 12px; padding: 10px 14px; font-size: 12px; color: var(--muted); }
   .fact b { display: block; color: var(--ink); font-size: 13px; font-weight: 600; }
-  .notes { margin-top: 20px; }
-  .notes h4 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
-  textarea { width: 100%; min-height: 130px; border: 0; background: var(--soft); border-radius: 14px; padding: 14px; resize: vertical; outline-color: var(--orange); }
+  .panel-title { margin: 22px 0 10px; font-size: 15px; font-weight: 600; }
 
-  .lessons-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .lessons-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; }
   .lessons-head h2 { margin: 0; font-size: 22px; font-weight: 500; }
   .lessons { list-style: none; margin: 0; padding: 0; }
-  .lesson {
-    width: 100%; display: flex; gap: 14px; align-items: center; border: 0; background: none; cursor: pointer; text-align: left;
-    padding: 12px 0; border-bottom: 1px solid var(--line);
-  }
+  .lessons li { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
+  .lesson { flex: 1; min-width: 0; display: flex; gap: 14px; align-items: center; border: 0; background: none; cursor: pointer; text-align: left; padding: 12px 0; }
   .l-ico { width: 44px; height: 44px; border-radius: 12px; background: var(--orange); color: var(--on-orange); display: grid; place-items: center; font-weight: 700; flex: none; }
   .lesson.done .l-ico { background: var(--side); color: var(--orange); }
-  .lesson.done .l-title { text-decoration: line-through; color: var(--muted); }
-  .l-title { font-weight: 500; line-height: 1.3; }
+  .lesson.current .l-ico { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--orange); }
+  .lesson.current .l-title { font-weight: 600; }
+  .l-title { font-weight: 500; line-height: 1.3; display: block; }
   .lesson small { color: var(--muted); font-size: 12px; }
+  .check-btn { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid var(--line); background: none; cursor: pointer; display: grid; place-items: center; color: transparent; flex: none; }
+  .check-btn svg { width: 16px; height: 16px; }
+  .check-btn.on { background: var(--side); border-color: var(--side); color: var(--orange); }
   .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
-  .tile { border-radius: 20px; padding: 18px 14px; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; }
-  .tile b { font-size: 26px; font-weight: 700; color: var(--orange); }
+  .tile { border-radius: 20px; padding: 18px 14px; min-height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; }
+  .tile b { font-size: 26px; font-weight: 700; color: var(--orange); font-variant-numeric: tabular-nums; }
   .tile small { color: var(--muted); font-size: 12px; }
   .tile.a { background: var(--orange-soft); }
   .tile.b { background: var(--soft); }
   .back { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; margin-bottom: 14px; display: inline-flex; gap: 6px; align-items: center; }
   .back svg { width: 16px; height: 16px; }
   .empty { color: var(--muted); padding: 20px 0; }
+
+  /* Forms */
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .field.wide { grid-column: 1 / -1; }
+  .field > span { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .field input, .field textarea, textarea.notes {
+    width: 100%; border: 1.5px solid transparent; background: var(--soft); border-radius: 12px; padding: 10px 12px; outline: none;
+  }
+  .field input:focus, .field textarea:focus, textarea.notes:focus { border-color: var(--orange); }
+  .field textarea { min-height: 90px; resize: vertical; }
+  textarea.notes { min-height: 130px; resize: vertical; }
+
+  /* Lesson editor */
+  .lesson-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .eyebrow { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .02em; }
+  .seg { display: inline-flex; background: var(--soft); border-radius: 12px; padding: 4px; gap: 4px; }
+  .seg button { border: 0; background: none; border-radius: 9px; padding: 7px 14px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--muted); }
+  .seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .blk { border: 1.5px solid var(--line); border-radius: 18px; padding: 16px; margin-top: 14px; }
+  .blk-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .blk-type { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
+  .blk-type .l-ico { width: 32px; height: 32px; border-radius: 9px; }
+  .blk-type .l-ico svg { width: 16px; height: 16px; }
+  .blk-tools { margin-left: auto; display: flex; gap: 6px; }
+  .icon-sm { width: 34px; height: 34px; border-radius: 10px; border: 0; background: var(--soft); cursor: pointer; display: grid; place-items: center; }
+  .icon-sm svg { width: 16px; height: 16px; }
+  .icon-sm.armed { background: var(--danger); color: #fff; }
+  .add-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding: 14px; border-radius: 18px; background: var(--soft); align-items: center; }
+  .add-bar > span { font-weight: 600; font-size: 13px; margin-right: 4px; }
+  .add-bar .btn { background: var(--surface); }
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .thumb { position: relative; width: 120px; height: 80px; border-radius: 10px; overflow: hidden; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); text-align: center; padding: 4px; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .thumb button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 7px; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; display: grid; place-items: center; z-index: 1; }
+  .thumb button svg { width: 12px; height: 12px; }
+  .upload { display: inline-flex; }
+  .upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .err { color: var(--danger); font-size: 12px; margin-top: 6px; }
+
+  /* Lesson content (show) */
+  .content { display: flex; flex-direction: column; gap: 22px; }
+  .b-title { font-size: 17px; font-weight: 600; margin: 0 0 10px; display: flex; gap: 10px; align-items: center; }
+  .b-title .l-ico { width: 30px; height: 30px; border-radius: 9px; }
+  .b-title .l-ico svg { width: 15px; height: 15px; }
+  .prose p { margin: 0 0 10px; max-width: 70ch; }
+  .prose p:last-child { margin-bottom: 0; }
+  .slides { position: relative; background: var(--side); border-radius: 18px; overflow: hidden; }
+  .slides .stage { aspect-ratio: 16 / 9; display: grid; place-items: center; max-width: 100%; }
+  .slides .stage img { width: 100%; height: 100%; object-fit: contain; }
+  .slides .stage iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+  .slides-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: #fff; font-size: 12px; }
+  .slides-bar button { width: 32px; height: 32px; border-radius: 9px; border: 0; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; display: grid; place-items: center; }
+  .slides-bar button svg { width: 16px; height: 16px; }
+  .slides-bar .count { flex: 1; text-align: center; font-variant-numeric: tabular-nums; }
+  .slides:fullscreen { display: flex; flex-direction: column; border-radius: 0; }
+  .slides:fullscreen .stage { flex: 1; aspect-ratio: auto; }
+  .video { border-radius: 18px; overflow: hidden; background: #000; }
+  .video video { width: 100%; display: block; max-height: 70vh; }
+  .link-card { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: var(--side); color: #fff; text-decoration: none; }
+  .link-card .l-ico { width: 48px; height: 48px; }
+  .link-card b { display: block; font-weight: 600; }
+  .link-card small { opacity: .7; word-break: break-all; }
+  .link-card .go { margin-left: auto; color: var(--orange); }
+  .task { background: var(--orange-soft); border-radius: 18px; padding: 18px 20px; }
+  .task .ans { margin-top: 12px; background: var(--surface); border-radius: 12px; padding: 12px 14px; }
+  .lesson-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .placeholder { border: 1.5px dashed var(--line); border-radius: 18px; padding: 28px; text-align: center; color: var(--muted); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px);
+    background: var(--side); color: #fff; padding: 12px 18px; border-radius: 14px; font-weight: 500; opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 50; max-width: calc(100vw - 32px);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
   @media (max-width: 1150px) {
     .ov-grid, .detail-grid { grid-template-columns: minmax(0, 1fr); }
@@ -204,56 +299,80 @@
     .side-panel h3, .side-panel .ring, .side-panel .ring-cap { grid-column: 1 / -1; }
   }
   @media (max-width: 760px) {
-    body { padding: 0; }
+    body { padding-block: 0; padding-left: 0; padding-right: 0; }
     body::before { display: none; }
     .shell { padding: 0; border-radius: 0; box-shadow: none; background: none; }
     .app { grid-template-columns: minmax(0, 1fr); border-radius: 0; min-height: 100vh; }
-    aside { flex-direction: row; padding: 10px 16px; gap: 8px; overflow-x: auto; }
+    aside { flex-direction: row; padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); gap: 8px; overflow-x: auto; }
     .avatar { margin: 0 6px 0 0; width: 40px; height: 40px; font-size: 16px; }
     nav { flex-direction: row; gap: 6px; }
     .nav-btn .tip { display: none; }
-    .side-bottom { margin: 0 0 0 auto; }
-    main { padding: 20px 16px 36px; }
-    .brand { display: none; }
-    .continue { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-top: 26px; }
+    .side-bottom { margin: 0 0 0 auto; flex-direction: row; }
+    main { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 36px max(16px, env(safe-area-inset-left, 0px)); }
+    .continue { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-top: 16px; }
     .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .side-panel { grid-template-columns: 1fr; }
+    .show-hero { grid-template-columns: minmax(0, 1fr); }
+    .cover-stack { justify-content: flex-start; }
     .hero { aspect-ratio: 4 / 3.4; }
     .hero .hero-text { max-width: 80%; }
     .hero .hero-icon { width: 40%; right: 5%; top: 56%; opacity: .5; }
     .now .actions { margin-left: 0; width: 100%; }
+    .form-grid { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
-</head>
-<body>
+
 <div class="shell">
   <div class="app">
     <aside>
-      <div class="avatar" title="Автор">P</div>
+      <div class="avatar" aria-hidden="true">P</div>
       <nav id="nav"></nav>
-      <div class="side-bottom">
-        <button class="nav-btn" id="themeBtn" aria-label="Сменить тему">
-          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-          <span class="tip">Сменить тему</span>
-        </button>
-      </div>
+      <div class="side-bottom" id="sideBottom"></div>
     </aside>
-
-    <main>
-      <div class="topbar">
-        <div class="brand">Piko AI<i>.</i></div>
-        <label class="search">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input id="q" type="search" placeholder="Поиск по курсам и модулям…">
-        </label>
-        <button class="icon-btn" data-go="" aria-label="Дашборд">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-        </button>
-      </div>
-      <div id="view"></div>
-    </main>
+    <main id="main"></main>
   </div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="application/json" id="default-content">
+{"version":1,"courses":[
+{"id":"seniors","icon":"heart","nav":"Старшее поколение","title":"ИИ для старшего поколения","g":"linear-gradient(140deg, #ffb347 0%, #ff9900 45%, #c25e00 100%)","short":"Спокойно и понятно: голосовые помощники, ChatGPT в быту, защита от мошенников.","audience":"Люди 55+","format":"Офлайн / Zoom, малые группы","duration":"4 недели","modules":[
+{"id":"s1","title":"Знакомство с ИИ","desc":"Что это такое и чего бояться не нужно","blocks":[]},
+{"id":"s2","title":"Смартфон и голосовые помощники","desc":"Алиса, Siri, Google Ассистент","blocks":[]},
+{"id":"s3","title":"ChatGPT в повседневной жизни","desc":"Рецепты, письма, вопросы о здоровье","blocks":[]},
+{"id":"s4","title":"Безопасность","desc":"Дипфейки, фальшивые звонки, мошенничество","blocks":[]},
+{"id":"s5","title":"Фото и воспоминания","desc":"Реставрация старых фото, открытки","blocks":[]},
+{"id":"s6","title":"Общение с близкими","desc":"Переводчик, видеозвонки, поздравления","blocks":[]}]},
+{"id":"marketing","icon":"megaphone","nav":"Маркетинг и SMM","title":"ИИ для маркетинга, SMM и медиа","g":"linear-gradient(150deg, #2b2b2b 0%, #141414 55%, #ff9900 140%)","short":"Контент-завод: тексты, визуал, видео, аналитика и автоматизация.","audience":"Маркетологи, SMM, журналисты","format":"Онлайн + практикум","duration":"6 недель","modules":[
+{"id":"k1","title":"Промптинг для контента","desc":"Тон бренда, структура, итерации","blocks":[]},
+{"id":"k2","title":"Тексты и контент-план","desc":"Посты, сценарии, рассылки","blocks":[]},
+{"id":"k3","title":"Генерация изображений","desc":"Midjourney, DALL·E, Ideogram","blocks":[]},
+{"id":"k4","title":"Видео и Reels","desc":"Монтаж, озвучка, аватары","blocks":[]},
+{"id":"k5","title":"Аналитика и аудитория","desc":"Исследование ЦА, конкуренты","blocks":[]},
+{"id":"k6","title":"Автоматизация SMM","desc":"Планирование и публикация","blocks":[]}]},
+{"id":"teachers","icon":"book","nav":"Педагоги","title":"ИИ для педагогов","g":"linear-gradient(140deg, #ffd08a 0%, #ffa726 50%, #e07b00 100%)","short":"Как готовить уроки, задания и обратную связь быстрее — и этично.","audience":"Учителя, преподаватели вузов","format":"Онлайн, вебинары","duration":"5 недель","modules":[
+{"id":"t1","title":"ИИ в образовании","desc":"Возможности, риски, академическая честность","blocks":[]},
+{"id":"t2","title":"Планы уроков","desc":"Поурочное планирование и сценарии","blocks":[]},
+{"id":"t3","title":"Тесты и задания","desc":"Генерация вариантов по уровням","blocks":[]},
+{"id":"t4","title":"Проверка и обратная связь","desc":"Критерии, рубрики, комментарии","blocks":[]},
+{"id":"t5","title":"Презентации и наглядность","desc":"Gamma, Canva, схемы","blocks":[]},
+{"id":"t6","title":"Персонализация обучения","desc":"Дифференциация и инклюзия","blocks":[]}]},
+{"id":"it","icon":"code","nav":"IT-студенты","title":"ИИ для IT-студентов","g":"linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 50%, #000 100%)","short":"LLM, API, RAG и ассистенты кода — с собственным проектом на выходе.","audience":"Студенты IT-направлений","format":"Онлайн, код-ревью","duration":"8 недель","modules":[
+{"id":"i1","title":"Основы ML и LLM","desc":"Токены, эмбеддинги, трансформеры","blocks":[]},
+{"id":"i2","title":"Работа с API моделей","desc":"Запросы, стриминг, стоимость","blocks":[]},
+{"id":"i3","title":"ИИ-ассистенты в разработке","desc":"Claude Code, Copilot, Cursor","blocks":[]},
+{"id":"i4","title":"RAG и векторные базы","desc":"Поиск по своим данным","blocks":[]},
+{"id":"i5","title":"Оценка и fine-tuning","desc":"Метрики, датасеты, эвалы","blocks":[]},
+{"id":"i6","title":"Пет-проект","desc":"От идеи до демо","blocks":[]}]},
+{"id":"agents","icon":"bot","nav":"ИИ-агенты","title":"ИИ-агенты","g":"linear-gradient(140deg, #ff9900 0%, #d35400 45%, #141414 100%)","short":"Агенты, инструменты, память и автоматизация процессов — code и no-code.","audience":"Продвинутые пользователи, разработчики","format":"Онлайн + интенсив","duration":"6 недель","modules":[
+{"id":"a1","title":"Что такое агент","desc":"Цикл: план → действие → проверка","blocks":[]},
+{"id":"a2","title":"Инструменты и tool use","desc":"Подключение функций и API","blocks":[]},
+{"id":"a3","title":"Память и планирование","desc":"Контекст, состояние, долгие задачи","blocks":[]},
+{"id":"a4","title":"Мультиагентные системы","desc":"Роли, оркестрация","blocks":[]},
+{"id":"a5","title":"No-code агенты","desc":"n8n, Make, Zapier","blocks":[]},
+{"id":"a6","title":"Запуск и мониторинг","desc":"Деплой, логи, безопасность","blocks":[]}]}
+]}
+</script>
 
 <script>
 const ICONS = {
@@ -265,253 +384,684 @@ const ICONS = {
   bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4"/><circle cx="12" cy="3" r="1"/><circle cx="9" cy="14" r="1.2"/><circle cx="15" cy="14" r="1.2"/><path d="M2 13v3M22 13v3"/>',
   layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
   check: '<path d="m5 12 4 4 10-10"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   rocket: '<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M9 15l-3-3c2-5 6-9 13-9 0 7-4 11-9 13z"/><circle cx="15" cy="9" r="1.5"/>',
-  back: '<path d="M15 6l-6 6 6 6"/>'
+  back: '<path d="M15 6l-6 6 6 6"/>',
+  next: '<path d="M9 6l6 6-6 6"/>',
+  text: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+  slides: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/>',
+  video: '<rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3z"/>',
+  task: '<path d="M9 5h10M9 12h10M9 19h10"/><path d="m3 5 1.5 1.5L7 4M3 12l1.5 1.5L7 11M3 19l1.5 1.5L7 18"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  file: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
+  up: '<path d="m6 15 6-6 6 6"/>',
+  down: '<path d="m6 9 6 6 6-6"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  play: '<path d="M7 4v16l13-8z"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  pen: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  save: '<path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/>',
+  moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  upload: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/>'
 };
-const svg = (name, extra = "") => `<svg viewBox="0 0 24 24" ${extra}>${ICONS[name]}</svg>`;
-
-const COURSES = [
-  {
-    id: "seniors", icon: "heart", nav: "Старшее поколение", title: "ИИ для старшего поколения",
-    g: "linear-gradient(140deg, #ffb347 0%, #ff9900 45%, #c25e00 100%)",
-    short: "Спокойно и понятно: голосовые помощники, ChatGPT в быту, защита от мошенников.",
-    audience: "Люди 55+", format: "Офлайн / Zoom, малые группы", duration: "4 недели",
-    modules: [
-      ["Знакомство с ИИ", "Что это такое и чего бояться не нужно"],
-      ["Смартфон и голосовые помощники", "Алиса, Siri, Google Ассистент"],
-      ["ChatGPT в повседневной жизни", "Рецепты, письма, вопросы о здоровье"],
-      ["Безопасность", "Дипфейки, фальшивые звонки, мошенничество"],
-      ["Фото и воспоминания", "Реставрация старых фото, открытки"],
-      ["Общение с близкими", "Переводчик, видеозвонки, поздравления"]
-    ]
-  },
-  {
-    id: "marketing", icon: "megaphone", nav: "Маркетинг и SMM", title: "ИИ для маркетинга, SMM и медиа",
-    g: "linear-gradient(150deg, #2b2b2b 0%, #141414 55%, #ff9900 140%)",
-    short: "Контент-завод: тексты, визуал, видео, аналитика и автоматизация.",
-    audience: "Маркетологи, SMM, журналисты", format: "Онлайн + практикум", duration: "6 недель",
-    modules: [
-      ["Промптинг для контента", "Тон бренда, структура, итерации"],
-      ["Тексты и контент-план", "Посты, сценарии, рассылки"],
-      ["Генерация изображений", "Midjourney, DALL·E, Ideogram"],
-      ["Видео и Reels", "Монтаж, озвучка, аватары"],
-      ["Аналитика и аудитория", "Исследование ЦА, конкуренты"],
-      ["Автоматизация SMM", "Планирование и публикация"]
-    ]
-  },
-  {
-    id: "teachers", icon: "book", nav: "Педагоги", title: "ИИ для педагогов",
-    g: "linear-gradient(140deg, #ffd08a 0%, #ffa726 50%, #e07b00 100%)",
-    short: "Как готовить уроки, задания и обратную связь быстрее — и этично.",
-    audience: "Учителя, преподаватели вузов", format: "Онлайн, вебинары", duration: "5 недель",
-    modules: [
-      ["ИИ в образовании", "Возможности, риски, академическая честность"],
-      ["Планы уроков", "Поурочное планирование и сценарии"],
-      ["Тесты и задания", "Генерация вариантов по уровням"],
-      ["Проверка и обратная связь", "Критерии, рубрики, комментарии"],
-      ["Презентации и наглядность", "Gamma, Canva, схемы"],
-      ["Персонализация обучения", "Дифференциация и инклюзия"]
-    ]
-  },
-  {
-    id: "it", icon: "code", nav: "IT-студенты", title: "ИИ для IT-студентов",
-    g: "linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 50%, #000 100%)",
-    short: "LLM, API, RAG и ассистенты кода — с собственным проектом на выходе.",
-    audience: "Студенты IT-направлений", format: "Онлайн, код-ревью", duration: "8 недель",
-    modules: [
-      ["Основы ML и LLM", "Токены, эмбеддинги, трансформеры"],
-      ["Работа с API моделей", "Запросы, стриминг, стоимость"],
-      ["ИИ-ассистенты в разработке", "Claude Code, Copilot, Cursor"],
-      ["RAG и векторные базы", "Поиск по своим данным"],
-      ["Оценка и fine-tuning", "Метрики, датасеты, эвалы"],
-      ["Пет-проект", "От идеи до демо"]
-    ]
-  },
-  {
-    id: "agents", icon: "bot", nav: "ИИ-агенты", title: "ИИ-агенты",
-    g: "linear-gradient(140deg, #ff9900 0%, #d35400 45%, #141414 100%)",
-    short: "Агенты, инструменты, память и автоматизация процессов — code и no-code.",
-    audience: "Продвинутые пользователи, разработчики", format: "Онлайн + интенсив", duration: "6 недель",
-    modules: [
-      ["Что такое агент", "Цикл: план → действие → проверка"],
-      ["Инструменты и tool use", "Подключение функций и API"],
-      ["Память и планирование", "Контекст, состояние, долгие задачи"],
-      ["Мультиагентные системы", "Роли, оркестрация"],
-      ["No-code агенты", "n8n, Make, Zapier"],
-      ["Запуск и мониторинг", "Деплой, логи, безопасность"]
-    ]
-  }
-];
+const svg = (name, extra = "") => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICONS[name] || ""}</svg>`;
+const BLOCK_TYPES = {
+  text:   { label: "Текст",       icon: "text" },
+  slides: { label: "Презентация", icon: "slides" },
+  video:  { label: "Видео",       icon: "video" },
+  task:   { label: "Задание",     icon: "task" },
+  link:   { label: "Ссылка",      icon: "link" },
+  file:   { label: "Файл",        icon: "file" }
+};
 const STATUSES = ["Идея", "В разработке", "Готов", "Идёт набор", "Идёт поток"];
 const LIVE = ["Готов", "Идёт набор", "Идёт поток"];
+const LEGACY_KEY = "piko-ai-dashboard-v1";
+const DRAFT_KEY = "piko-ai-draft-v2";
+const PRIV_KEY = "piko-ai-private-v2";
 
-const KEY = "piko-ai-dashboard-v1";
-function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
-const state = load();
-function cs(id) {
-  state[id] ??= { done: [], status: "В разработке", notes: "" };
-  return state[id];
-}
-const progress = (c) => Math.round(cs(c.id).done.length / c.modules.length * 100);
-const nextIdx = (c) => { const i = c.modules.findIndex((_, i) => !cs(c.id).done.includes(i)); return i < 0 ? c.modules.length - 1 : i; };
-
-const $ = (s) => document.querySelector(s);
-const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+const DEFAULT = JSON.parse(document.getElementById("default-content").textContent);
+let content = structuredClone(DEFAULT);
+let priv = { done: {}, status: {}, notes: {} };
+const caps = { user: null, artifact: null, assets: null, db: null, privDoc: null };
+const isLocal = !window.claude;
+let canEdit = false, ready = false, dirty = false, saving = false;
+let showMode = ssGet("piko-show") === "1";
+let lessonTab = "edit";
 let query = "";
+let draftOffer = null;
+const slideIdx = {};
 
-function renderNav(active) {
-  const btn = (id, icon, label) =>
-    `<button class="nav-btn ${active === id ? "active" : ""}" data-go="${id}" aria-label="${esc(label)}">${svg(icon)}<span class="tip">${esc(label)}</span></button>`;
-  $("#nav").innerHTML = btn("", "grid", "Дашборд") + COURSES.map((c) => btn(c.id, c.icon, c.nav)).join("");
+/* ---------- helpers ---------- */
+function ssGet(k) { try { return sessionStorage.getItem(k); } catch { return null; } }
+function ssSet(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch {} }
+function lsGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function lsSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+const uid = () => Math.random().toString(36).slice(2, 8);
+const blobUrl = (id) => "/_blob/" + id;
+const safeUrl = (u) => /^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
+const course = (id) => content.courses.find((c) => c.id === id);
+const mode = () => (canEdit && !showMode ? "studio" : "show");
+const done = (c) => (priv.done[c.id] ||= []);
+const status = (c) => priv.status[c.id] || "В разработке";
+const progress = (c) => c.modules.length ? Math.round(done(c).filter((id) => c.modules.some((m) => m.id === id)).length / c.modules.length * 100) : 0;
+const nextIdx = (c) => { const i = c.modules.findIndex((m) => !done(c).includes(m.id)); return i < 0 ? Math.max(0, c.modules.length - 1) : i; };
+const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? b : c; };
+const blocksLabel = (n) => n ? `${n} ${plural(n, "материал", "материала", "материалов")}` : "материалов пока нет";
+function paragraphs(t) {
+  return String(t || "").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
+    .map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
+}
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
 }
 
+/* ---------- routing: "" | courseId | courseId-moduleId | show ---------- */
+function parseRoute() {
+  const h = location.hash.slice(1);
+  if (!h) return { view: "home" };
+  const [cid, mid] = h.split("-");
+  const c = course(cid);
+  if (!c) return { view: "home" };
+  const m = mid && c.modules.find((x) => x.id === mid);
+  return m ? { view: "lesson", c, m } : { view: "course", c };
+}
+function go(token) {
+  if (location.hash.slice(1) === token) render(); else location.hash = token;
+}
+
+/* ---------- private state (progress, statuses, notes) ---------- */
+let privTimer;
+function savePriv() {
+  clearTimeout(privTimer);
+  privTimer = setTimeout(async () => {
+    if (caps.privDoc) {
+      try { await caps.privDoc.set(priv); } catch (e) { toast("Не удалось сохранить личные заметки: " + (e.code || "ошибка")); }
+    } else lsSet(PRIV_KEY, JSON.stringify(priv));
+  }, 700);
+}
+function migrateLegacy() {
+  let old; try { old = JSON.parse(lsGet(LEGACY_KEY)); } catch {}
+  if (!old) return false;
+  for (const c of content.courses) {
+    const o = old[c.id]; if (!o) continue;
+    priv.done[c.id] = (o.done || []).map((i) => c.modules[i]?.id).filter(Boolean);
+    if (o.status) priv.status[c.id] = o.status;
+    if (o.notes) priv.notes[c.id] = o.notes;
+  }
+  return true;
+}
+
+function loadLocalPriv() {
+  let saved = null; try { saved = JSON.parse(lsGet(PRIV_KEY)); } catch {}
+  if (saved) priv = { done: {}, status: {}, notes: {}, ...saved }; else migrateLegacy();
+}
+
+/* ---------- content saving (studio) ---------- */
+function markDirty() {
+  dirty = true;
+  lsSet(DRAFT_KEY, JSON.stringify({ at: Date.now(), content }));
+  paintSave();
+}
+function paintSave() {
+  const b = $("#saveBtn"), s = $("#saveState");
+  if (!b) return;
+  b.disabled = saving || !dirty;
+  b.innerHTML = svg("save") + (saving ? "Сохраняю…" : "Сохранить");
+  if (s) s.textContent = dirty ? "Есть несохранённые изменения" : "Всё сохранено";
+}
+async function saveContent() {
+  if (!dirty || saving) return;
+  if (!caps.artifact) {
+    toast(isLocal ? "Это локальная копия: изменения хранятся только в этом браузере." : "Сохранение недоступно в этом окне.");
+    return;
+  }
+  saving = true; paintSave();
+  try {
+    await caps.artifact.publish({ "content.json": { content: JSON.stringify(content), contentType: "application/json" } });
+    dirty = false; lsSet(DRAFT_KEY, null);
+    toast("Сохранено. Режим показа уже видит изменения.");
+  } catch (e) {
+    const code = e && e.code;
+    if (code === "conflict") toast("Страница обновилась в другом окне. Черновик сохранён — восстановите его после перезагрузки.");
+    else if (code === "rate_limited") toast("Слишком частые сохранения. Подождите минуту и сохраните снова.");
+    else if (["not_writer", "not_granted", "capability_disabled", "not_declared"].includes(code)) toast("Сохранять можно только из вашего аккаунта-владельца.");
+    else toast("Не удалось сохранить (" + (code || "ошибка") + "). Изменения остались в черновике.");
+  } finally { saving = false; paintSave(); }
+}
+
+/* ---------- sidebar + topbar ---------- */
+function renderChrome(route) {
+  const active = route.c ? route.c.id : "";
+  const btn = (id, icon, label) =>
+    `<button class="nav-btn ${active === id && route.view !== "home" || (!id && route.view === "home") ? "active" : ""}" data-go="${id}" aria-label="${esc(label)}">${svg(icon)}<span class="tip">${esc(label)}</span></button>`;
+  $("#nav").innerHTML = btn("", "grid", mode() === "studio" ? "Дашборд" : "Все курсы") + content.courses.map((c) => btn(c.id, c.icon, c.nav)).join("");
+  $("#sideBottom").innerHTML =
+    (canEdit && showMode ? `<button class="nav-btn" data-act="exit-show" aria-label="Вернуться в студию">${svg("pen")}<span class="tip">Вернуться в студию</span></button>` : "") +
+    `<button class="nav-btn" data-act="theme" aria-label="Сменить тему">${svg("moon")}<span class="tip">Сменить тему</span></button>`;
+}
+function topbar() {
+  const studio = mode() === "studio";
+  return `<div class="topbar">
+    <div class="brand"><span>Piko AI<i>.</i></span>${studio ? '<span class="mode-chip studio">Студия</span>' : ""}</div>
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Поиск по курсам и урокам…" value="${esc(query)}" aria-label="Поиск">
+    </label>
+    ${studio ? `
+      <span class="save-state" id="saveState"></span>
+      <button class="btn primary" id="saveBtn" data-act="save">${svg("save")}Сохранить</button>
+      <button class="btn dark" data-act="enter-show">${svg("play")}Режим показа</button>` : ""}
+  </div>`;
+}
+
+/* ---------- search ---------- */
 function matches(c) {
   if (!query) return true;
-  const hay = [c.title, c.short, c.audience, ...c.modules.flat()].join(" ").toLowerCase();
+  const hay = [c.title, c.short, c.audience, ...c.modules.flatMap((m) => [m.title, m.desc, ...m.blocks.map((b) => b.title || "")])].join(" ").toLowerCase();
   return hay.includes(query);
 }
 
-function renderOverview() {
-  const totalMods = COURSES.reduce((a, c) => a + c.modules.length, 0);
-  const doneMods = COURSES.reduce((a, c) => a + cs(c.id).done.length, 0);
-  const pct = Math.round(doneMods / totalMods * 100);
-  const live = COURSES.filter((c) => LIVE.includes(cs(c.id).status)).length;
-  const list = COURSES.filter(matches);
+/* ---------- views: studio ---------- */
+function studioHome() {
+  const all = content.courses;
+  const totalMods = all.reduce((a, c) => a + c.modules.length, 0);
+  const doneMods = all.reduce((a, c) => a + c.modules.filter((m) => done(c).includes(m.id)).length, 0);
+  const pct = totalMods ? Math.round(doneMods / totalMods * 100) : 0;
+  const mats = all.reduce((a, c) => a + c.modules.reduce((x, m) => x + m.blocks.length, 0), 0);
+  const list = all.filter(matches);
   const recent = [...list].sort((a, b) => progress(b) - progress(a)).slice(0, 3);
   const C = 2 * Math.PI * 44;
-
-  $("#view").innerHTML = `
+  return `
     <div class="ov-grid">
       <div>
         <div class="section-head"><h2>Продолжить работу</h2></div>
         ${list.length ? `<div class="continue">${recent.map((c) => `
-          <button class="cont-card" data-go="${c.id}">
+          <button class="cont-card" data-go="${c.id}-${c.modules[nextIdx(c)]?.id || ""}">
             <div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>
             <div style="min-width:0;flex:1">
               <b>${esc(c.title)}</b>
-              <small>Модуль ${nextIdx(c) + 1} из ${c.modules.length} · ${esc(cs(c.id).status)}</small>
+              <small>Урок ${nextIdx(c) + 1} из ${c.modules.length} · ${esc(status(c))}</small>
               <div class="mini-bar"><span style="width:${progress(c)}%"></span></div>
             </div>
           </button>`).join("")}</div>` : `<div class="empty">Ничего не найдено по запросу «${esc(query)}».</div>`}
-
-        <div class="section-head"><h2>Все курсы</h2><span class="muted">${list.length} из ${COURSES.length}</span></div>
+        <div class="section-head"><h2>Все курсы</h2><span class="muted">${list.length} из ${all.length}</span></div>
         <div class="courses">${list.map((c) => `
           <button class="course" data-go="${c.id}">
             <div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>
             <b>${esc(c.title)}</b>
             <small>${esc(c.audience)}</small>
-            <span class="tag ${LIVE.includes(cs(c.id).status) ? "on" : ""}">${esc(cs(c.id).status)}</span>
+            <span class="tag ${LIVE.includes(status(c)) ? "on" : ""}">${esc(status(c))}</span>
           </button>`).join("")}</div>
       </div>
-
       <div class="side-panel">
         <h3>Статистика</h3>
         <div class="ring">
           <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="var(--line)"/><circle cx="50" cy="50" r="44" stroke="var(--orange)" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg>
           <div class="num">${pct}%</div>
         </div>
-        <div class="ring-cap">общий прогресс</div>
-        <div class="stat-row"><div class="stat-ico">${svg("layers")}</div><div><b>${COURSES.length}</b><small>курсов</small></div></div>
-        <div class="stat-row"><div class="stat-ico">${svg("check")}</div><div><b>${doneMods}/${totalMods}</b><small>модулей готово</small></div></div>
-        <div class="stat-row"><div class="stat-ico">${svg("rocket")}</div><div><b>${live}</b><small>готовы к запуску</small></div></div>
+        <div class="ring-cap">уроков готово</div>
+        <div class="stat-row"><div class="stat-ico">${svg("check")}</div><div><b>${doneMods}/${totalMods}</b><small>уроков готово</small></div></div>
+        <div class="stat-row"><div class="stat-ico">${svg("layers")}</div><div><b>${mats}</b><small>материалов в уроках</small></div></div>
+        <div class="stat-row"><div class="stat-ico">${svg("rocket")}</div><div><b>${all.filter((c) => LIVE.includes(status(c))).length}</b><small>курсов готовы к запуску</small></div></div>
       </div>
     </div>`;
 }
 
-function renderDetail(c) {
-  const s = cs(c.id), p = progress(c), n = nextIdx(c), idx = COURSES.indexOf(c);
-  const weeks = parseInt(c.duration) || 0;
-  $("#view").innerHTML = `
-    <button class="back" data-go="">${svg("back")} Все курсы</button>
+function lessonList(c, currentId, studio) {
+  return `<ul class="lessons">${c.modules.map((m, i) => {
+    const isDone = done(c).includes(m.id);
+    return `<li>
+      <button class="lesson ${studio && isDone ? "done" : ""} ${m.id === currentId ? "current" : ""}" data-go="${c.id}-${m.id}">
+        <span class="l-ico">${studio && isDone ? svg("check") : i + 1}</span>
+        <span style="min-width:0"><span class="l-title">${esc(m.title || "Без названия")}</span><small>${blocksLabel(m.blocks.length)}</small></span>
+      </button>
+      ${studio ? `<button class="check-btn ${isDone ? "on" : ""}" data-act="toggle-done" data-c="${c.id}" data-m="${m.id}" aria-pressed="${isDone}" aria-label="Урок готов">${svg("check")}</button>` : ""}
+    </li>`;
+  }).join("")}</ul>`;
+}
+
+function studioCourse(c) {
+  const p = progress(c), n = nextIdx(c), idx = content.courses.indexOf(c), nm = c.modules[n];
+  return `
+    <button class="back" data-go="">${svg("back")} Дашборд</button>
     <div class="detail-grid">
       <div>
         <h1 style="margin-bottom:18px">Курс — ${esc(c.title)}</h1>
         <div class="cover hero" style="--g:${c.g}">
-          <div class="hero-text"><span>Курс 0${idx + 1}</span><h2>${esc(c.short)}</h2></div>
+          <div class="hero-text"><span>Курс ${idx + 1}</span><h2>${esc(c.short)}</h2></div>
           ${svg(c.icon, 'class="hero-icon"')}
-          <div class="player">
-            <svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>
-            <div class="track"><span style="width:${Math.max(p, 14)}%">${s.done.length} / ${c.modules.length}</span></div>
+          ${nm ? `<button class="player" data-go="${c.id}-${nm.id}">
+            ${svg("play")}
+            <div class="track"><span style="width:${Math.max(p, 14)}%">${done(c).length} / ${c.modules.length}</span></div>
             <span>${p}%</span>
-          </div>
+          </button>` : ""}
         </div>
-
-        <div class="now">
+        ${nm ? `<div class="now">
           <div class="badge-ico">${n + 1}</div>
-          <div>
-            <h3>Модуль ${n + 1} — ${esc(c.modules[n][0])}</h3>
-            <small>${esc(c.modules[n][1])}</small>
-          </div>
+          <div><h3>Урок ${n + 1} — ${esc(nm.title)}</h3><small>${esc(nm.desc)}</small></div>
           <div class="actions">
-            <select id="status" aria-label="Статус курса">${STATUSES.map((x) => `<option ${x === s.status ? "selected" : ""}>${x}</option>`).join("")}</select>
+            <select class="pill-select" id="status" aria-label="Статус курса">${STATUSES.map((x) => `<option ${x === status(c) ? "selected" : ""}>${x}</option>`).join("")}</select>
+            <button class="btn primary" data-go="${c.id}-${nm.id}">${svg("pen")}Открыть урок</button>
           </div>
-        </div>
-        <div class="about">
-          Программа на ${c.modules.length} модулей. Отмечайте модули справа по мере готовности материалов — прогресс сохранится автоматически.
-          <div class="facts">
-            <div class="fact">Аудитория<b>${esc(c.audience)}</b></div>
-            <div class="fact">Формат<b>${esc(c.format)}</b></div>
-            <div class="fact">Длительность<b>${esc(c.duration)}</b></div>
-          </div>
-        </div>
-        <div class="notes">
-          <h4>Заметки</h4>
-          <textarea id="notes" placeholder="Идеи, ссылки, материалы…">${esc(s.notes)}</textarea>
-        </div>
-      </div>
+        </div>` : ""}
 
+        <h3 class="panel-title">Описание курса</h3>
+        <div class="form-grid">
+          <label class="field wide"><span>Название</span><input id="cf-title" data-cf="title" value="${esc(c.title)}"></label>
+          <label class="field wide"><span>Короткое описание</span><input id="cf-short" data-cf="short" value="${esc(c.short)}"></label>
+          <label class="field"><span>Аудитория</span><input id="cf-audience" data-cf="audience" value="${esc(c.audience)}"></label>
+          <label class="field"><span>Формат</span><input id="cf-format" data-cf="format" value="${esc(c.format)}"></label>
+          <label class="field"><span>Длительность</span><input id="cf-duration" data-cf="duration" value="${esc(c.duration)}"></label>
+          <label class="field"><span>Название в меню</span><input id="cf-nav" data-cf="nav" value="${esc(c.nav)}"></label>
+        </div>
+
+        <h3 class="panel-title">Мои заметки <span class="muted" style="font-weight:400;font-size:12px">· видите только вы</span></h3>
+        <textarea class="notes" id="notes" placeholder="Идеи, ссылки, материалы…">${esc(priv.notes[c.id] || "")}</textarea>
+      </div>
       <div>
-        <div class="lessons-head"><h2>Модули</h2><span class="muted">${s.done.length}/${c.modules.length}</span></div>
-        <ul class="lessons">${c.modules.map(([t], i) => `
-          <li><button class="lesson ${s.done.includes(i) ? "done" : ""}" data-mod="${i}" aria-pressed="${s.done.includes(i)}">
-            <span class="l-ico">${s.done.includes(i) ? svg("check") : i + 1}</span>
-            <span><span class="l-title">${esc(t)}</span><br><small>Модуль ${i + 1} · ${s.done.includes(i) ? "готов" : "в работе"}</small></span>
-          </button></li>`).join("")}
-        </ul>
+        <div class="lessons-head"><h2>Уроки</h2><span class="muted">${done(c).length}/${c.modules.length} готово</span></div>
+        ${lessonList(c, null, true)}
+        <button class="btn" style="margin-top:14px;width:100%;justify-content:center" data-act="add-module" data-c="${c.id}">${svg("plus")}Добавить урок</button>
         <div class="tiles">
           <div class="tile a"><b>${p}%</b><small>готово</small></div>
-          <div class="tile b"><b>${weeks}</b><small>недель</small></div>
+          <div class="tile b"><b>${c.modules.reduce((a, m) => a + m.blocks.length, 0)}</b><small>материалов</small></div>
         </div>
       </div>
     </div>`;
-  $("#status").onchange = (e) => { s.status = e.target.value; save(); };
-  $("#notes").oninput = (e) => { s.notes = e.target.value; save(); };
-  document.querySelectorAll("[data-mod]").forEach((el) => el.onclick = () => {
-    const i = +el.dataset.mod;
-    s.done = s.done.includes(i) ? s.done.filter((x) => x !== i) : [...s.done, i];
-    save();
-    const y = scrollY; renderDetail(c); scrollTo(0, y);
-  });
 }
 
-function route() {
-  const c = COURSES.find((x) => x.id === location.hash.slice(1));
-  renderNav(c ? c.id : "");
-  c ? renderDetail(c) : renderOverview();
-  window.scrollTo(0, 0);
+function blockEditor(b, i, total) {
+  const t = BLOCK_TYPES[b.type];
+  const f = (k, label, wide = true, ph = "") => `<label class="field ${wide ? "wide" : ""}"><span>${label}</span><input id="b-${b.id}-${k}" data-b="${b.id}" data-k="${k}" value="${esc(b[k] || "")}" placeholder="${esc(ph)}"></label>`;
+  const ta = (k, label, ph = "") => `<label class="field wide"><span>${label}</span><textarea id="b-${b.id}-${k}" data-b="${b.id}" data-k="${k}" placeholder="${esc(ph)}">${esc(b[k] || "")}</textarea></label>`;
+  const uploader = (accept, multiple, label) => caps.assets
+    ? `<label class="btn sm upload">${svg("upload")}${label}<input type="file" accept="${accept}" ${multiple ? "multiple" : ""} data-upload="${b.id}"></label>`
+    : `<div class="hint">${isLocal ? "Загрузка файлов работает в опубликованной версии на claude.ai." : "Загрузка файлов доступна владельцу."}</div>`;
+  let body = "";
+  if (b.type === "text") body = f("title", "Заголовок", true, "Например: Что такое нейросеть") + ta("body", "Текст", "Пустая строка — новый абзац");
+  if (b.type === "task") body = f("title", "Название задания", true, "Например: Задание 1") + ta("body", "Условие") + ta("answer", "Ответ или подсказка (скрыт до нажатия)");
+  if (b.type === "link") body = f("title", "Название") + f("url", "Адрес", true, "https://…") + f("note", "Пояснение");
+  if (b.type === "slides") {
+    body = f("title", "Название презентации") + f("url", "Или ссылка на Canva / Google Slides / Gamma", true, "https://…") +
+      `<div class="field wide"><span>Слайды: картинки (PNG, JPG) или PDF</span>
+        <div class="thumbs">${(b.items || []).map((it, k) => `<div class="thumb">
+          ${it.type === "pdf" ? `PDF<br>${esc(it.name || "")}` : `<img src="${blobUrl(it.id)}" alt="Слайд ${k + 1}">`}
+          <button data-act="item-del" data-b="${b.id}" data-i="${k}" aria-label="Убрать слайд">${svg("x")}</button></div>`).join("")}</div>
+        <div style="margin-top:10px">${uploader("image/*,application/pdf", true, "Добавить слайды")}</div>
+        <div class="hint">Совет: в PowerPoint или Keynote сохраните презентацию как PDF или картинки. До 20 МБ на файл.</div></div>`;
+  }
+  if (b.type === "video") {
+    body = f("title", "Название видео") + f("url", "Ссылка (YouTube, Vimeo, Google Drive)", true, "https://…") +
+      `<div class="field wide"><span>Или загрузите видеофайл (MP4, WebM до 20 МБ)</span>
+        ${b.assetId ? `<div class="thumbs"><div class="thumb">Видео загружено<br>${esc(b.name || "")}<button data-act="asset-clear" data-b="${b.id}" aria-label="Убрать видео">${svg("x")}</button></div></div>` : ""}
+        <div style="margin-top:10px">${uploader("video/mp4,video/webm", false, b.assetId ? "Заменить видео" : "Загрузить видео")}</div></div>`;
+  }
+  if (b.type === "file") {
+    body = f("title", "Название материала") +
+      `<div class="field wide"><span>Файл (PDF, картинка, текст до 20 МБ)</span>
+        ${b.assetId ? `<div class="thumbs"><div class="thumb">${esc(b.name || "Файл")}<button data-act="asset-clear" data-b="${b.id}" aria-label="Убрать файл">${svg("x")}</button></div></div>` : ""}
+        <div style="margin-top:10px">${uploader("application/pdf,image/*,text/plain,text/markdown,text/csv", false, b.assetId ? "Заменить файл" : "Загрузить файл")}</div></div>`;
+  }
+  return `<div class="blk" id="blk-${b.id}">
+    <div class="blk-head">
+      <span class="blk-type"><span class="l-ico">${svg(t.icon)}</span>${t.label}</span>
+      <div class="blk-tools">
+        <button class="icon-sm" data-act="blk-up" data-b="${b.id}" ${i === 0 ? "disabled" : ""} aria-label="Выше">${svg("up")}</button>
+        <button class="icon-sm" data-act="blk-down" data-b="${b.id}" ${i === total - 1 ? "disabled" : ""} aria-label="Ниже">${svg("down")}</button>
+        <button class="icon-sm" data-act="blk-del" data-b="${b.id}" aria-label="Удалить блок">${svg("trash")}</button>
+      </div>
+    </div>
+    <div class="form-grid">${body}</div>
+    <div class="err" id="err-${b.id}"></div>
+  </div>`;
 }
 
-document.addEventListener("click", (e) => {
-  const go = e.target.closest("[data-go]");
-  if (go) location.hash = go.dataset.go;
-});
-window.addEventListener("hashchange", route);
-$("#q").addEventListener("input", (e) => {
-  query = e.target.value.trim().toLowerCase();
-  if (location.hash.length > 1) location.hash = ""; else renderOverview();
+function studioLesson(c, m) {
+  const i = c.modules.indexOf(m);
+  const editor = `
+    <div class="form-grid">
+      <label class="field wide"><span>Название урока</span><input id="m-title" data-mf="title" value="${esc(m.title)}"></label>
+      <label class="field wide"><span>Коротко о чём урок</span><input id="m-desc" data-mf="desc" value="${esc(m.desc)}"></label>
+    </div>
+    <h3 class="panel-title">Материалы урока</h3>
+    ${m.blocks.length ? m.blocks.map((b, k) => blockEditor(b, k, m.blocks.length)).join("") : `<div class="placeholder">В уроке пока нет материалов. Добавьте первый блок ниже.</div>`}
+    <div class="add-bar"><span>Добавить:</span>
+      ${Object.entries(BLOCK_TYPES).map(([k, t]) => `<button class="btn sm" data-act="add-block" data-type="${k}">${svg(t.icon)}${t.label}</button>`).join("")}
+    </div>
+    <div style="margin-top:22px"><button class="btn danger" data-act="mod-del">${svg("trash")}Удалить урок</button></div>`;
+  return `
+    <button class="back" data-go="${c.id}">${svg("back")} ${esc(c.title)}</button>
+    <div class="detail-grid">
+      <div>
+        <div class="lesson-top">
+          <div><div class="eyebrow">Урок ${i + 1} из ${c.modules.length}</div><h1>${esc(m.title || "Без названия")}</h1></div>
+          <div class="seg" role="tablist">
+            <button class="${lessonTab === "edit" ? "on" : ""}" data-act="tab" data-tab="edit">Редактор</button>
+            <button class="${lessonTab === "preview" ? "on" : ""}" data-act="tab" data-tab="preview">Предпросмотр</button>
+          </div>
+        </div>
+        ${lessonTab === "edit" ? editor : lessonContent(m)}
+      </div>
+      <div>
+        <div class="lessons-head"><h2>Уроки</h2><span class="muted">${done(c).length}/${c.modules.length} готово</span></div>
+        ${lessonList(c, m.id, true)}
+        <button class="btn" style="margin-top:14px;width:100%;justify-content:center" data-act="add-module" data-c="${c.id}">${svg("plus")}Добавить урок</button>
+      </div>
+    </div>`;
+}
+
+/* ---------- views: show ---------- */
+function showHome() {
+  const list = content.courses.filter(matches);
+  return `
+    <div class="show-hero">
+      <div>
+        <div class="eyebrow">Piko AI · программы обучения</div>
+        <h1>Искусственный интеллект для каждого</h1>
+        <p>${content.courses.length} ${plural(content.courses.length, "курс", "курса", "курсов")} — от первых шагов со смартфоном до собственных ИИ-агентов. Выберите программу, чтобы посмотреть уроки.</p>
+      </div>
+      <div class="cover-stack" aria-hidden="true">${content.courses.slice(0, 4).map((c) => `<div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>`).join("")}</div>
+    </div>
+    <div class="section-head"><h2>Курсы</h2>${query ? `<span class="muted">${list.length} из ${content.courses.length}</span>` : ""}</div>
+    ${list.length ? `<div class="courses">${list.map((c) => `
+      <button class="course" data-go="${c.id}">
+        <div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>
+        <b>${esc(c.title)}</b>
+        <small>${esc(c.audience)}</small>
+        <span class="tag">${c.modules.length} ${plural(c.modules.length, "урок", "урока", "уроков")} · ${esc(c.duration)}</span>
+      </button>`).join("")}</div>` : `<div class="empty">Ничего не найдено по запросу «${esc(query)}».</div>`}`;
+}
+
+function showCourse(c) {
+  const first = c.modules[0];
+  return `
+    <button class="back" data-go="">${svg("back")} Все курсы</button>
+    <div class="detail-grid">
+      <div>
+        <h1 style="margin-bottom:18px">${esc(c.title)}</h1>
+        <div class="cover hero" style="--g:${c.g}">
+          <div class="hero-text"><span>${c.modules.length} ${plural(c.modules.length, "урок", "урока", "уроков")}</span><h2>${esc(c.short)}</h2></div>
+          ${svg(c.icon, 'class="hero-icon"')}
+          ${first ? `<button class="player" data-go="${c.id}-${first.id}">${svg("play")}<div class="track"><span style="width:14%">Начать</span></div><span>${esc(c.duration)}</span></button>` : ""}
+        </div>
+        <div class="facts" style="margin-top:20px">
+          <div class="fact">Для кого<b>${esc(c.audience)}</b></div>
+          <div class="fact">Формат<b>${esc(c.format)}</b></div>
+          <div class="fact">Длительность<b>${esc(c.duration)}</b></div>
+        </div>
+      </div>
+      <div>
+        <div class="lessons-head"><h2>Уроки</h2></div>
+        ${lessonList(c, null, false)}
+      </div>
+    </div>`;
+}
+
+function showLesson(c, m) {
+  const i = c.modules.indexOf(m), prev = c.modules[i - 1], next = c.modules[i + 1];
+  return `
+    <button class="back" data-go="${c.id}">${svg("back")} ${esc(c.title)}</button>
+    <div class="detail-grid">
+      <div>
+        <div class="lesson-top"><div><div class="eyebrow">Урок ${i + 1} из ${c.modules.length}</div><h1>${esc(m.title)}</h1>${m.desc ? `<div class="muted" style="margin-top:4px">${esc(m.desc)}</div>` : ""}</div></div>
+        ${lessonContent(m)}
+        <div class="lesson-nav">
+          ${prev ? `<button class="btn" data-go="${c.id}-${prev.id}">${svg("back")}${esc(prev.title)}</button>` : "<span></span>"}
+          ${next ? `<button class="btn primary" data-go="${c.id}-${next.id}">${esc(next.title)}${svg("next")}</button>` : ""}
+        </div>
+      </div>
+      <div>
+        <div class="lessons-head"><h2>Уроки</h2></div>
+        ${lessonList(c, m.id, false)}
+      </div>
+    </div>`;
+}
+
+function lessonContent(m) {
+  if (!m.blocks.length) return `<div class="placeholder">Материалы урока скоро появятся.</div>`;
+  return `<div class="content">${m.blocks.map(renderBlock).join("")}</div>`;
+}
+function bTitle(b, fallback) {
+  const t = BLOCK_TYPES[b.type];
+  return `<h3 class="b-title"><span class="l-ico">${svg(t.icon)}</span>${esc(b.title || fallback)}</h3>`;
+}
+function linkCard(url, title, note, icon) {
+  return `<a class="link-card" href="${esc(url)}" target="_blank" rel="noopener noreferrer">
+    <span class="l-ico">${svg(icon)}</span><span style="min-width:0"><b>${esc(title)}</b><small>${esc(note || url)}</small></span>
+    <span class="go">${svg("next")}</span></a>`;
+}
+function renderBlock(b) {
+  if (b.type === "text") return `<section>${b.title ? bTitle(b, "") : ""}<div class="prose">${paragraphs(b.body)}</div></section>`;
+  if (b.type === "task") return `<section class="task">${bTitle(b, "Задание")}<div class="prose">${paragraphs(b.body)}</div>
+    ${b.answer ? `<button class="btn sm" style="margin-top:12px;background:var(--surface)" data-act="reveal" data-b="${b.id}">${svg("eye")}Показать ответ</button><div class="ans prose" id="ans-${b.id}" hidden>${paragraphs(b.answer)}</div>` : ""}</section>`;
+  if (b.type === "link") {
+    const u = safeUrl(b.url);
+    return u ? `<section>${linkCard(u, b.title || "Открыть ссылку", b.note, "link")}</section>` : "";
+  }
+  if (b.type === "file") {
+    return b.assetId ? `<section>${linkCard(blobUrl(b.assetId), b.title || b.name || "Материал", (b.name || "Файл") + " · откроется в новой вкладке", "file")}</section>` : "";
+  }
+  if (b.type === "video") {
+    const u = safeUrl(b.url);
+    return `<section>${bTitle(b, "Видео")}
+      ${b.assetId ? `<div class="video"><video controls preload="metadata" src="${blobUrl(b.assetId)}"></video></div>` : ""}
+      ${u ? linkCard(u, "Смотреть видео", u, "video") : ""}
+      ${!b.assetId && !u ? `<div class="placeholder">Видео ещё не добавлено.</div>` : ""}</section>`;
+  }
+  if (b.type === "slides") {
+    const items = b.items || [];
+    const imgs = items.filter((x) => x.type === "image");
+    const pdfs = items.filter((x) => x.type === "pdf");
+    const u = safeUrl(b.url);
+    const k = Math.min(slideIdx[b.id] || 0, Math.max(0, imgs.length - 1));
+    return `<section>${bTitle(b, "Презентация")}
+      ${imgs.length ? `<div class="slides" id="sl-${b.id}">
+        <div class="stage"><img id="sli-${b.id}" src="${blobUrl(imgs[k].id)}" alt="Слайд ${k + 1}"></div>
+        <div class="slides-bar">
+          <button data-act="slide" data-b="${b.id}" data-d="-1" aria-label="Предыдущий слайд">${svg("back")}</button>
+          <span class="count" id="slc-${b.id}">${k + 1} / ${imgs.length}</span>
+          <button data-act="slide" data-b="${b.id}" data-d="1" aria-label="Следующий слайд">${svg("next")}</button>
+          <button data-act="fullscreen" data-b="${b.id}" aria-label="На весь экран">${svg("expand")}</button>
+        </div></div>` : ""}
+      ${pdfs.map((p) => `<div class="slides" style="margin-top:12px"><div class="stage"><iframe src="${blobUrl(p.id)}" title="${esc(p.name || "PDF")}"></iframe></div>
+        <div class="slides-bar"><span class="count">${esc(p.name || "PDF")}</span><a href="${blobUrl(p.id)}" target="_blank" rel="noopener" style="color:var(--orange);font-weight:600">Открыть отдельно</a></div></div>`).join("")}
+      ${u ? `<div style="margin-top:12px">${linkCard(u, "Открыть презентацию", u, "slides")}</div>` : ""}
+      ${!items.length && !u ? `<div class="placeholder">Слайды ещё не добавлены.</div>` : ""}</section>`;
+  }
+  return "";
+}
+
+/* ---------- render ---------- */
+function render() {
+  const route = parseRoute();
+  renderChrome(route);
+  const studio = mode() === "studio";
+  let body;
+  if (route.view === "lesson") body = studio ? studioLesson(route.c, route.m) : showLesson(route.c, route.m);
+  else if (route.view === "course") body = studio ? studioCourse(route.c) : showCourse(route.c);
+  else body = studio ? studioHome() : showHome();
+  const banner = studio && draftOffer ? `<div class="banner"><span>Найдены несохранённые изменения от ${new Date(draftOffer.at).toLocaleString("ru-RU")}.</span>
+    <button class="btn sm primary" data-act="draft-restore">Восстановить</button><button class="btn sm" data-act="draft-drop">Отбросить</button></div>` : "";
+  const keep = document.activeElement && document.activeElement.id === "q";
+  $("#main").innerHTML = topbar() + banner + body;
+  if (keep) { const q = $("#q"); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+  paintSave();
+}
+
+/* ---------- events ---------- */
+function findBlock(id) {
+  for (const c of content.courses) for (const m of c.modules) { const b = m.blocks.find((x) => x.id === id); if (b) return { c, m, b }; }
+  return {};
+}
+function rerender() { const y = scrollY; render(); scrollTo(0, y); }
+function armed(el) {
+  if (el.dataset.armed) return true;
+  el.dataset.armed = "1"; el.classList.add("armed");
+  if (el.classList.contains("btn")) el.lastChild.textContent = "Точно удалить?";
+  setTimeout(() => { if (el.isConnected) { delete el.dataset.armed; el.classList.remove("armed"); if (el.classList.contains("btn")) el.lastChild.textContent = "Удалить урок"; } }, 3000);
+  return false;
+}
+
+document.addEventListener("click", async (e) => {
+  const g = e.target.closest("[data-go]");
+  if (g) { if (g.dataset.go !== location.hash.slice(1)) lessonTab = "edit"; go(g.dataset.go); return; }
+  const a = e.target.closest("[data-act]");
+  if (!a) return;
+  const act = a.dataset.act, route = parseRoute();
+  if (act === "theme") {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark"; lsSet(LEGACY_KEY + "-theme", root.dataset.theme);
+  }
+  else if (act === "save") saveContent();
+  else if (act === "enter-show") { showMode = true; ssSet("piko-show", "1"); render(); toast("Режим показа. Вернуться в студию — кнопка с карандашом слева."); }
+  else if (act === "exit-show") { showMode = false; ssSet("piko-show", null); render(); }
+  else if (act === "tab") { lessonTab = a.dataset.tab; rerender(); }
+  else if (act === "toggle-done") {
+    const c = course(a.dataset.c), id = a.dataset.m, d = done(c);
+    priv.done[c.id] = d.includes(id) ? d.filter((x) => x !== id) : [...d, id];
+    savePriv(); rerender();
+  }
+  else if (act === "add-module") {
+    const c = course(a.dataset.c), m = { id: uid(), title: "Новый урок", desc: "", blocks: [] };
+    c.modules.push(m); markDirty(); lessonTab = "edit"; go(`${c.id}-${m.id}`);
+  }
+  else if (act === "mod-del" && route.m) {
+    if (!armed(a)) return;
+    route.c.modules = route.c.modules.filter((x) => x !== route.m); markDirty(); go(route.c.id);
+  }
+  else if (act === "add-block" && route.m) {
+    const b = { id: uid(), type: a.dataset.type, title: "" };
+    if (b.type === "slides") b.items = [];
+    route.m.blocks.push(b); markDirty(); rerender();
+    document.getElementById("blk-" + b.id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  else if (act === "blk-up" || act === "blk-down") {
+    const { m, b } = findBlock(a.dataset.b); if (!m) return;
+    const i = m.blocks.indexOf(b), j = i + (act === "blk-up" ? -1 : 1);
+    if (j < 0 || j >= m.blocks.length) return;
+    [m.blocks[i], m.blocks[j]] = [m.blocks[j], m.blocks[i]]; markDirty(); rerender();
+  }
+  else if (act === "blk-del") {
+    if (!armed(a)) return;
+    const { m, b } = findBlock(a.dataset.b); if (!m) return;
+    m.blocks = m.blocks.filter((x) => x !== b); markDirty(); rerender();
+  }
+  else if (act === "item-del") {
+    const { b } = findBlock(a.dataset.b); if (!b) return;
+    b.items.splice(+a.dataset.i, 1); markDirty(); rerender();
+  }
+  else if (act === "asset-clear") {
+    const { b } = findBlock(a.dataset.b); if (!b) return;
+    delete b.assetId; delete b.name; markDirty(); rerender();
+  }
+  else if (act === "reveal") {
+    const el = document.getElementById("ans-" + a.dataset.b); if (el) { el.hidden = !el.hidden; a.lastChild.textContent = el.hidden ? "Показать ответ" : "Скрыть ответ"; }
+  }
+  else if (act === "slide") stepSlide(a.dataset.b, +a.dataset.d);
+  else if (act === "fullscreen") {
+    const el = document.getElementById("sl-" + a.dataset.b);
+    try { document.fullscreenElement ? await document.exitFullscreen() : await el.requestFullscreen(); } catch { toast("Полноэкранный режим недоступен в этом окне."); }
+  }
+  else if (act === "draft-restore") { content = draftOffer.content; draftOffer = null; dirty = true; render(); toast("Черновик восстановлен. Не забудьте сохранить."); }
+  else if (act === "draft-drop") { draftOffer = null; lsSet(DRAFT_KEY, null); render(); }
 });
 
-const root = document.documentElement;
-try { const t = localStorage.getItem(KEY + "-theme"); if (t) root.dataset.theme = t; } catch {}
-$("#themeBtn").onclick = () => {
-  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-  root.dataset.theme = dark ? "light" : "dark";
-  try { localStorage.setItem(KEY + "-theme", root.dataset.theme); } catch {}
-};
+function stepSlide(bid, d) {
+  const { b } = findBlock(bid); if (!b) return;
+  const imgs = (b.items || []).filter((x) => x.type === "image"); if (!imgs.length) return;
+  const k = ((slideIdx[bid] || 0) + d + imgs.length) % imgs.length;
+  slideIdx[bid] = k;
+  const img = document.getElementById("sli-" + bid);
+  if (img) { img.src = blobUrl(imgs[k].id); img.alt = "Слайд " + (k + 1); }
+  const cnt = document.getElementById("slc-" + bid); if (cnt) cnt.textContent = `${k + 1} / ${imgs.length}`;
+}
+document.addEventListener("keydown", (e) => {
+  const fs = document.fullscreenElement;
+  if (!fs || !fs.id.startsWith("sl-")) return;
+  if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); stepSlide(fs.id.slice(3), 1); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); stepSlide(fs.id.slice(3), -1); }
+});
 
-route();
+document.addEventListener("input", (e) => {
+  const t = e.target, route = parseRoute();
+  if (t.id === "q") { query = t.value.trim().toLowerCase(); if (route.view !== "home") go(""); else render(); return; }
+  if (t.id === "notes" && route.c) { priv.notes[route.c.id] = t.value; savePriv(); return; }
+  if (t.dataset.cf && route.c) { route.c[t.dataset.cf] = t.value; markDirty(); return; }
+  if (t.dataset.mf && route.m) { route.m[t.dataset.mf] = t.value; markDirty(); return; }
+  if (t.dataset.b && t.dataset.k) { const { b } = findBlock(t.dataset.b); if (b) { b[t.dataset.k] = t.value; markDirty(); } }
+});
+document.addEventListener("change", async (e) => {
+  const t = e.target;
+  if (t.id === "status") { const r = parseRoute(); priv.status[r.c.id] = t.value; savePriv(); return; }
+  if (!t.dataset.upload) return;
+  const { b } = findBlock(t.dataset.upload); if (!b || !caps.assets) return;
+  const files = [...t.files]; const err = document.getElementById("err-" + b.id);
+  if (err) err.textContent = "";
+  for (const file of files) {
+    if (err) err.textContent = `Загружаю «${file.name}»…`;
+    try {
+      const r = await caps.assets.upload(file, file.type ? undefined : { type: "application/pdf" });
+      if (b.type === "slides") (b.items ||= []).push({ id: r.id, type: r.contentType === "application/pdf" ? "pdf" : "image", name: file.name });
+      else { b.assetId = r.id; b.name = file.name; }
+      markDirty();
+    } catch (x) {
+      const code = x && x.code;
+      const why = code === "too_large" ? "файл больше 20 МБ" : code === "unsupported_type" ? "этот тип файла не поддерживается" : (code || "ошибка");
+      toast(`«${file.name}» не загружен: ${why}.`);
+    }
+  }
+  rerender();
+});
+window.addEventListener("hashchange", () => { render(); scrollTo(0, 0); });
+window.addEventListener("beforeunload", (e) => { if (dirty && mode() === "studio") { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- boot ---------- */
+try { const th = lsGet(LEGACY_KEY + "-theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
+if (location.hash === "#show") { showMode = true; ssSet("piko-show", "1"); history.replaceState(null, "", location.pathname + location.search); }
+render();
+
+(async function boot() {
+  try {
+    const res = await fetch("content.json", { cache: "no-store" });
+    if (res.ok) { const data = await res.json(); if (data && Array.isArray(data.courses)) content = data; }
+  } catch {}
+
+  if (isLocal) {
+    canEdit = true;
+    loadLocalPriv();
+  } else {
+    caps.user = await claude.use("user");
+    canEdit = caps.user ? await caps.user.canEdit() : false;
+    if (canEdit) {
+      [caps.artifact, caps.assets, caps.db] = await Promise.all([claude.use("artifact"), claude.use("assets"), claude.use("db")]);
+      const id = caps.user ? await caps.user.id() : null;
+      if (caps.db && id) {
+        caps.privDoc = caps.db.doc(`data/users/${id}/piko`);
+        try {
+          const snap = await caps.privDoc.get();
+          if (snap.exists) priv = { done: {}, status: {}, notes: {}, ...snap.data() };
+          else if (migrateLegacy()) savePriv();
+        } catch {}
+      } else {
+        loadLocalPriv();
+      }
+    }
+  }
+  if (canEdit) {
+    try {
+      const d = JSON.parse(lsGet(DRAFT_KEY));
+      if (d && d.content && JSON.stringify(d.content) !== JSON.stringify(content)) draftOffer = d;
+    } catch {}
+  }
+  ready = true;
+  render();
+})();
 </script>
-</body>
 </html>
