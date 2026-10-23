@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Piko AI — курсы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --ink: #121212;
+    --muted: #6b6b6b;
+    --line: #e6e2db;
+    --track: #ece8e1;
+    --c1: #ffd8b8; /* старшее поколение */
+    --c2: #f6c6e6; /* маркетинг */
+    --c3: #cfe7a8; /* педагоги */
+    --c4: #bfdcff; /* IT-студенты */
+    --c5: #d9ccff; /* агенты */
+    --accent: #121212;
+    --on-accent: #ffffff;
+    --radius: 24px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111111; --surface: #1b1b1b; --ink: #f2f2f2; --muted: #9a9a9a;
+      --line: #2a2a2a; --track: #2a2a2a;
+      --c1: #5a3a22; --c2: #573049; --c3: #3c4f22; --c4: #24405f; --c5: #3d3266;
+      --accent: #f2f2f2; --on-accent: #111111;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111111; --surface: #1b1b1b; --ink: #f2f2f2; --muted: #9a9a9a;
+    --line: #2a2a2a; --track: #2a2a2a;
+    --c1: #5a3a22; --c2: #573049; --c3: #3c4f22; --c4: #24405f; --c5: #3d3266;
+    --accent: #f2f2f2; --on-accent: #111111;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Manrope", system-ui, sans-serif; font-size: 15px; line-height: 1.45;
+  }
+  button, select, textarea, input { font: inherit; color: inherit; }
+
+  .app { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
+
+  /* Sidebar */
+  aside {
+    position: sticky; top: 0; height: 100vh; padding: 28px 20px;
+    display: flex; flex-direction: column; gap: 28px; border-right: 1px solid var(--line);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 11px; background: var(--accent); color: var(--on-accent);
+    display: grid; place-items: center; font-size: 15px; }
+  nav { display: flex; flex-direction: column; gap: 4px; }
+  nav button {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    background: none; border: 0; padding: 10px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; color: var(--muted);
+  }
+  nav button:hover { background: var(--surface); color: var(--ink); }
+  nav button.active { background: var(--accent); color: var(--on-accent); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .side-foot { margin-top: auto; font-size: 13px; color: var(--muted); }
+  .theme-btn { margin-top: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; cursor: pointer; width: 100%; }
+
+  main { padding: 32px 40px 60px; max-width: 1280px; width: 100%; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+  h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: -0.035em; margin: 0; font-weight: 800; }
+  .sub { color: var(--muted); margin-top: 8px; }
+  .date-chip { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: 13px; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat { background: var(--surface); border-radius: var(--radius); padding: 20px 22px; }
+  .stat-label { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .stat.dark { background: var(--accent); color: var(--on-accent); }
+  .stat.dark .stat-label { color: inherit; opacity: .65; }
+
+  /* Bento of courses */
+  .section-title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .card {
+    border-radius: var(--radius); padding: 22px; cursor: pointer; border: 0; text-align: left;
+    display: flex; flex-direction: column; gap: 14px; min-height: 230px; color: var(--ink);
+    transition: transform .2s ease;
+  }
+  .card:hover { transform: translateY(-3px); }
+  .card:nth-child(1), .card:nth-child(2) { grid-column: span 3; }
+  .card:nth-child(n+3) { grid-column: span 2; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .num { font-weight: 800; font-size: 13px; background: rgba(255,255,255,.55); border-radius: 999px; padding: 4px 10px; }
+  :root[data-theme="dark"] .num { background: rgba(0,0,0,.25); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .num { background: rgba(0,0,0,.25); } }
+  .badge { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px; background: var(--accent); color: var(--on-accent); white-space: nowrap; }
+  .card h3 { margin: 0; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; }
+  .card p { margin: 0; font-size: 14px; opacity: .8; }
+  .card-foot { margin-top: auto; }
+  .prog-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .bar { height: 8px; border-radius: 99px; background: rgba(0,0,0,.08); overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: var(--ink); border-radius: 99px; transition: width .3s ease; }
+
+  /* Detail */
+  .detail { display: none; }
+  .detail.show { display: block; }
+  .back { background: none; border: 0; padding: 0; cursor: pointer; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+  .hero { border-radius: var(--radius); padding: 28px; margin-bottom: 18px; }
+  .hero h2 { font-size: clamp(26px, 3.5vw, 38px); letter-spacing: -0.03em; margin: 8px 0 8px; line-height: 1.05; }
+  .hero-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+  .hero-meta select { background: var(--surface); border: 0; border-radius: 999px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
+  .pill { background: var(--surface); border-radius: 999px; padding: 8px 12px; font-weight: 700; font-size: 13px; }
+  .grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .panel { background: var(--surface); border-radius: var(--radius); padding: 22px; }
+  .panel h4 { margin: 0 0 12px; font-size: 16px; font-weight: 800; }
+  .modules { list-style: none; margin: 0; padding: 0; }
+  .modules li { border-top: 1px solid var(--line); }
+  .modules li:first-child { border-top: 0; }
+  .modules label { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; cursor: pointer; }
+  .modules input { width: 20px; height: 20px; accent-color: var(--accent); margin: 1px 0 0; flex: none; }
+  .modules .m-title { font-weight: 700; }
+  .modules .m-desc { color: var(--muted); font-size: 13px; }
+  .modules input:checked ~ div .m-title { text-decoration: line-through; color: var(--muted); }
+  textarea { width: 100%; min-height: 160px; border: 1px solid var(--line); background: var(--bg); border-radius: 14px; padding: 12px; resize: vertical; }
+  .facts { display: grid; gap: 10px; margin-bottom: 18px; }
+  .facts div { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+  .facts span:first-child { color: var(--muted); }
+  .facts span:last-child { font-weight: 700; text-align: right; }
+
+  @media (max-width: 1000px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .card:nth-child(n) { grid-column: span 3; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: minmax(0, 1fr); }
+    aside, nav { min-width: 0; }
+    aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; gap: 14px; }
+    nav { flex-direction: row; overflow-x: auto; }
+    nav button { white-space: nowrap; width: auto; }
+    .side-foot { display: none; }
+    main { padding: 20px 16px 40px; }
+    .card:nth-child(n) { grid-column: span 6; }
+    .stat-value { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo"><div class="logo-mark">P</div>Piko AI</div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      Личный кабинет автора. Прогресс и заметки хранятся в этом браузере.
+      <button class="theme-btn" id="themeBtn">Сменить тему</button>
+    </div>
+  </aside>
+
+  <main>
+    <section id="overview">
+      <div class="top">
+        <div>
+          <h1>Мои ИИ-курсы</h1>
+          <div class="sub">Пять программ — от первых шагов до собственных агентов.</div>
+        </div>
+        <div class="date-chip" id="today"></div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <h2 class="section-title">Курсы</h2>
+      <div class="bento" id="bento"></div>
+    </section>
+
+    <section class="detail" id="detail"></section>
+  </main>
+</div>
+
+<script>
+const COURSES = [
+  {
+    id: "seniors", nav: "Старшее поколение", color: "--c1", title: "ИИ для старшего поколения",
+    short: "Спокойно и понятно: голосовые помощники, ChatGPT в быту, защита от мошенников.",
+    audience: "Люди 55+", format: "Офлайн / Zoom, малые группы", duration: "4 недели",
+    modules: [
+      ["Знакомство с ИИ", "Что это такое и чего бояться не нужно"],
+      ["Смартфон и голосовые помощники", "Алиса, Siri, Google Ассистент"],
+      ["ChatGPT в повседневной жизни", "Рецепты, письма, вопросы о здоровье"],
+      ["Безопасность", "Дипфейки, фальшивые звонки, мошенничество"],
+      ["Фото и воспоминания", "Реставрация старых фото, открытки"],
+      ["Общение с близкими", "Переводчик, видеозвонки, поздравления"]
+    ]
+  },
+  {
+    id: "marketing", nav: "Маркетинг и SMM", color: "--c2", title: "ИИ для маркетинга, SMM и медиа",
+    short: "Контент-завод: тексты, визуал, видео, аналитика и автоматизация.",
+    audience: "Маркетологи, SMM, журналисты", format: "Онлайн + практикум", duration: "6 недель",
+    modules: [
+      ["Промптинг для контента", "Тон бренда, структура, итерации"],
+      ["Тексты и контент-план", "Посты, сценарии, рассылки"],
+      ["Генерация изображений", "Midjourney, DALL·E, Ideogram"],
+      ["Видео и Reels", "Монтаж, озвучка, аватары"],
+      ["Аналитика и аудитория", "Исследование ЦА, конкуренты"],
+      ["Автоматизация SMM", "Планирование и публикация"]
+    ]
+  },
+  {
+    id: "teachers", nav: "Педагоги", color: "--c3", title: "ИИ для педагогов",
+    short: "Как готовить уроки, задания и обратную связь быстрее — и этично.",
+    audience: "Учителя, преподаватели вузов", format: "Онлайн, вебинары", duration: "5 недель",
+    modules: [
+      ["ИИ в образовании", "Возможности, риски, академическая честность"],
+      ["Планы уроков", "Поурочное планирование и сценарии"],
+      ["Тесты и задания", "Генерация вариантов по уровням"],
+      ["Проверка и обратная связь", "Критерии, рубрики, комментарии"],
+      ["Презентации и наглядность", "Gamma, Canva, схемы"],
+      ["Персонализация обучения", "Дифференциация и инклюзия"]
+    ]
+  },
+  {
+    id: "it", nav: "IT-студенты", color: "--c4", title: "ИИ для IT-студентов",
+    short: "LLM, API, RAG и ассистенты кода — с собственным проектом на выходе.",
+    audience: "Студенты IT-направлений", format: "Онлайн, код-ревью", duration: "8 недель",
+    modules: [
+      ["Основы ML и LLM", "Токены, эмбеддинги, трансформеры"],
+      ["Работа с API моделей", "Запросы, стриминг, стоимость"],
+      ["ИИ-ассистенты в разработке", "Claude Code, Copilot, Cursor"],
+      ["RAG и векторные базы", "Поиск по своим данным"],
+      ["Оценка и fine-tuning", "Метрики, датасеты, эвалы"],
+      ["Пет-проект", "От идеи до демо"]
+    ]
+  },
+  {
+    id: "agents", nav: "ИИ-агенты", color: "--c5", title: "ИИ-агенты",
+    short: "Агенты, инструменты, память и автоматизация процессов — code и no-code.",
+    audience: "Продвинутые пользователи, разработчики", format: "Онлайн + интенсив", duration: "6 недель",
+    modules: [
+      ["Что такое агент", "Цикл: план → действие → проверка"],
+      ["Инструменты и tool use", "Подключение функций и API"],
+      ["Память и планирование", "Контекст, состояние, долгие задачи"],
+      ["Мультиагентные системы", "Роли, оркестрация"],
+      ["No-code агенты", "n8n, Make, Zapier"],
+      ["Запуск и мониторинг", "Деплой, логи, безопасность"]
+    ]
+  }
+];
+const STATUSES = ["Идея", "В разработке", "Готов", "Идёт набор", "Идёт поток"];
+
+const KEY = "piko-ai-dashboard-v1";
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
+const state = load();
+function cs(id) {
+  state[id] ??= { done: [], status: "В разработке", notes: "" };
+  return state[id];
+}
+function progress(c) { return Math.round(cs(c.id).done.length / c.modules.length * 100); }
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => s.replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+function renderNav(active) {
+  $("#nav").innerHTML =
+    `<button data-go="" class="${!active ? "active" : ""}">▦ Дашборд</button>` +
+    COURSES.map((c) => `<button data-go="${c.id}" class="${active === c.id ? "active" : ""}">
+      <span class="dot" style="background:var(${c.color})"></span>${esc(c.nav)}</button>`).join("");
+}
+
+function renderOverview() {
+  const totalMods = COURSES.reduce((a, c) => a + c.modules.length, 0);
+  const doneMods = COURSES.reduce((a, c) => a + cs(c.id).done.length, 0);
+  const ready = COURSES.filter((c) => ["Готов", "Идёт набор", "Идёт поток"].includes(cs(c.id).status)).length;
+  $("#stats").innerHTML = `
+    <div class="stat dark"><div class="stat-label">Курсов</div><div class="stat-value">${COURSES.length}</div></div>
+    <div class="stat"><div class="stat-label">Модулей готово</div><div class="stat-value">${doneMods}/${totalMods}</div></div>
+    <div class="stat"><div class="stat-label">Общий прогресс</div><div class="stat-value">${Math.round(doneMods / totalMods * 100)}%</div></div>
+    <div class="stat"><div class="stat-label">Готовы к запуску</div><div class="stat-value">${ready}</div></div>`;
+  $("#bento").innerHTML = COURSES.map((c, i) => {
+    const p = progress(c);
+    return `<button class="card" data-go="${c.id}" style="background:var(${c.color})">
+      <div class="card-head"><span class="num">0${i + 1}</span><span class="badge">${esc(cs(c.id).status)}</span></div>
+      <h3>${esc(c.title)}</h3>
+      <p>${esc(c.short)}</p>
+      <div class="card-foot">
+        <div class="prog-row"><span>${cs(c.id).done.length} из ${c.modules.length} модулей</span><span>${p}%</span></div>
+        <div class="bar"><span style="width:${p}%"></span></div>
+      </div>
+    </button>`;
+  }).join("");
+}
+
+function renderDetail(c) {
+  const s = cs(c.id), p = progress(c), idx = COURSES.indexOf(c);
+  $("#detail").innerHTML = `
+    <button class="back" data-go="">← Все курсы</button>
+    <div class="hero" style="background:var(${c.color})">
+      <span class="num">Курс 0${idx + 1}</span>
+      <h2>${esc(c.title)}</h2>
+      <div>${esc(c.short)}</div>
+      <div class="hero-meta">
+        <select id="status" aria-label="Статус">${STATUSES.map((x) => `<option ${x === s.status ? "selected" : ""}>${x}</option>`).join("")}</select>
+        <span class="pill">${p}% готово</span>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h4>Программа курса</h4>
+        <ul class="modules">${c.modules.map(([t, d], i) => `
+          <li><label><input type="checkbox" data-mod="${i}" ${s.done.includes(i) ? "checked" : ""}>
+            <div><div class="m-title">${i + 1}. ${esc(t)}</div><div class="m-desc">${esc(d)}</div></div></label></li>`).join("")}
+        </ul>
+      </div>
+      <div class="panel">
+        <h4>О курсе</h4>
+        <div class="facts">
+          <div><span>Аудитория</span><span>${esc(c.audience)}</span></div>
+          <div><span>Формат</span><span>${esc(c.format)}</span></div>
+          <div><span>Длительность</span><span>${esc(c.duration)}</span></div>
+        </div>
+        <h4>Заметки</h4>
+        <textarea id="notes" placeholder="Идеи, ссылки, материалы…">${esc(s.notes)}</textarea>
+      </div>
+    </div>`;
+  $("#status").onchange = (e) => { s.status = e.target.value; save(); };
+  $("#notes").oninput = (e) => { s.notes = e.target.value; save(); };
+  document.querySelectorAll("[data-mod]").forEach((el) => el.onchange = () => {
+    const i = +el.dataset.mod;
+    s.done = el.checked ? [...new Set([...s.done, i])] : s.done.filter((x) => x !== i);
+    save();
+    $(".pill").textContent = progress(c) + "% готово";
+  });
+}
+
+function route() {
+  const id = location.hash.slice(1);
+  const c = COURSES.find((x) => x.id === id);
+  renderNav(c?.id);
+  $("#overview").style.display = c ? "none" : "";
+  $("#detail").classList.toggle("show", !!c);
+  c ? renderDetail(c) : renderOverview();
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("click", (e) => {
+  const go = e.target.closest("[data-go]");
+  if (go) location.hash = go.dataset.go;
+});
+window.addEventListener("hashchange", route);
+
+$("#today").textContent = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+
+const root = document.documentElement;
+try { const t = localStorage.getItem(KEY + "-theme"); if (t) root.dataset.theme = t; } catch {}
+$("#themeBtn").onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem(KEY + "-theme", root.dataset.theme); } catch {}
+};
+
+route();
+</script>
+</body>
+</html>
