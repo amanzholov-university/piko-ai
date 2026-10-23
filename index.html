@@ -7,184 +7,274 @@
 <title>Piko AI — курсы</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f2ee;
+    --page: #e9e9e7;
+    --frame: rgba(255,255,255,.55);
     --surface: #ffffff;
-    --ink: #121212;
-    --muted: #6b6b6b;
-    --line: #e6e2db;
-    --track: #ece8e1;
-    --c1: #ffd8b8; /* старшее поколение */
-    --c2: #f6c6e6; /* маркетинг */
-    --c3: #cfe7a8; /* педагоги */
-    --c4: #bfdcff; /* IT-студенты */
-    --c5: #d9ccff; /* агенты */
-    --accent: #121212;
-    --on-accent: #ffffff;
-    --radius: 24px;
+    --soft: #f4f3f0;
+    --ink: #141414;
+    --muted: #8a8a8a;
+    --line: #ececec;
+    --side: #141414;
+    --side-ink: #ffffff;
+    --orange: #ff9900;
+    --orange-soft: #fff1dc;
+    --on-orange: #141414;
+    --radius: 22px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #111111; --surface: #1b1b1b; --ink: #f2f2f2; --muted: #9a9a9a;
-      --line: #2a2a2a; --track: #2a2a2a;
-      --c1: #5a3a22; --c2: #573049; --c3: #3c4f22; --c4: #24405f; --c5: #3d3266;
-      --accent: #f2f2f2; --on-accent: #111111;
+      --page: #0b0b0b; --frame: rgba(255,255,255,.05); --surface: #181818; --soft: #222222;
+      --ink: #f2f2f2; --muted: #9a9a9a; --line: #2a2a2a; --side: #000000; --orange-soft: #3a2a10;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #111111; --surface: #1b1b1b; --ink: #f2f2f2; --muted: #9a9a9a;
-    --line: #2a2a2a; --track: #2a2a2a;
-    --c1: #5a3a22; --c2: #573049; --c3: #3c4f22; --c4: #24405f; --c5: #3d3266;
-    --accent: #f2f2f2; --on-accent: #111111;
+    --page: #0b0b0b; --frame: rgba(255,255,255,.05); --surface: #181818; --soft: #222222;
+    --ink: #f2f2f2; --muted: #9a9a9a; --line: #2a2a2a; --side: #000000; --orange-soft: #3a2a10;
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    background: var(--bg); color: var(--ink);
-    font-family: "Manrope", system-ui, sans-serif; font-size: 15px; line-height: 1.45;
+    min-height: 100vh; color: var(--ink); background: var(--page);
+    font-family: "Poppins", system-ui, sans-serif; font-size: 14px; line-height: 1.5;
+    padding: 28px; overflow-x: hidden; position: relative;
+  }
+  body::before {
+    content: ""; position: fixed; right: -10vw; top: 18vh; width: 62vw; height: 90vh;
+    background: var(--orange); border-radius: 48px 0 0 0; z-index: -1;
   }
   button, select, textarea, input { font: inherit; color: inherit; }
+  svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-  .app { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
+  /* Shell */
+  .shell {
+    max-width: 1320px; margin: 0 auto; padding: 14px; border-radius: 40px;
+    background: var(--frame); backdrop-filter: blur(12px); box-shadow: 0 30px 80px rgba(0,0,0,.12);
+  }
+  .app { display: grid; grid-template-columns: 84px minmax(0, 1fr); min-height: calc(100vh - 84px); border-radius: 30px; overflow: hidden; }
 
-  /* Sidebar */
   aside {
-    position: sticky; top: 0; height: 100vh; padding: 28px 20px;
-    display: flex; flex-direction: column; gap: 28px; border-right: 1px solid var(--line);
+    background: var(--side); color: var(--side-ink);
+    display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 26px 0;
   }
-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
-  .logo-mark { width: 34px; height: 34px; border-radius: 11px; background: var(--accent); color: var(--on-accent);
-    display: grid; place-items: center; font-size: 15px; }
-  nav { display: flex; flex-direction: column; gap: 4px; }
-  nav button {
-    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-    background: none; border: 0; padding: 10px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; color: var(--muted);
+  .avatar {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--orange); color: var(--on-orange);
+    display: grid; place-items: center; flex: none; font-weight: 700; font-size: 18px; border: 3px solid rgba(255,255,255,.15); margin-bottom: 18px;
   }
-  nav button:hover { background: var(--surface); color: var(--ink); }
-  nav button.active { background: var(--accent); color: var(--on-accent); }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-  .side-foot { margin-top: auto; font-size: 13px; color: var(--muted); }
-  .theme-btn { margin-top: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; cursor: pointer; width: 100%; }
-
-  main { padding: 32px 40px 60px; max-width: 1280px; width: 100%; }
-  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
-  h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: -0.035em; margin: 0; font-weight: 800; }
-  .sub { color: var(--muted); margin-top: 8px; }
-  .date-chip { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: 13px; }
-
-  /* Stats */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-  .stat { background: var(--surface); border-radius: var(--radius); padding: 20px 22px; }
-  .stat-label { color: var(--muted); font-size: 13px; font-weight: 600; }
-  .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; margin-top: 6px; font-variant-numeric: tabular-nums; }
-  .stat.dark { background: var(--accent); color: var(--on-accent); }
-  .stat.dark .stat-label { color: inherit; opacity: .65; }
-
-  /* Bento of courses */
-  .section-title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 14px; }
-  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-  .card {
-    border-radius: var(--radius); padding: 22px; cursor: pointer; border: 0; text-align: left;
-    display: flex; flex-direction: column; gap: 14px; min-height: 230px; color: var(--ink);
-    transition: transform .2s ease;
+  nav { display: flex; flex-direction: column; gap: 10px; }
+  .nav-btn {
+    width: 46px; height: 46px; border-radius: 14px; border: 0; cursor: pointer; background: none; color: rgba(255,255,255,.7);
+    display: grid; place-items: center; position: relative;
   }
-  .card:hover { transform: translateY(-3px); }
-  .card:nth-child(1), .card:nth-child(2) { grid-column: span 3; }
-  .card:nth-child(n+3) { grid-column: span 2; }
-  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .num { font-weight: 800; font-size: 13px; background: rgba(255,255,255,.55); border-radius: 999px; padding: 4px 10px; }
-  :root[data-theme="dark"] .num { background: rgba(0,0,0,.25); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .num { background: rgba(0,0,0,.25); } }
-  .badge { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px; background: var(--accent); color: var(--on-accent); white-space: nowrap; }
-  .card h3 { margin: 0; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; }
-  .card p { margin: 0; font-size: 14px; opacity: .8; }
-  .card-foot { margin-top: auto; }
-  .prog-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .bar { height: 8px; border-radius: 99px; background: rgba(0,0,0,.08); overflow: hidden; }
-  .bar > span { display: block; height: 100%; background: var(--ink); border-radius: 99px; transition: width .3s ease; }
+  .nav-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .nav-btn.active { background: var(--orange); color: var(--on-orange); }
+  .nav-btn .tip {
+    position: absolute; left: 58px; white-space: nowrap; background: var(--ink); color: var(--surface);
+    font-size: 12px; padding: 5px 10px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 5;
+  }
+  .nav-btn:hover .tip { opacity: 1; }
+  .side-bottom { margin-top: auto; }
+  .side-bottom .nav-btn { background: rgba(255,153,0,.18); color: var(--orange); }
+
+  main { background: var(--surface); padding: 30px 36px 40px; min-width: 0; }
+
+  /* Topbar */
+  .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+  .brand { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; margin-right: 10px; white-space: nowrap; }
+  .brand i { color: var(--orange); font-style: normal; }
+  .search {
+    flex: 1; display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: 14px; padding: 0 16px; height: 48px; color: var(--muted);
+  }
+  .search input { border: 0; background: none; outline: none; width: 100%; color: var(--ink); }
+  .icon-btn {
+    width: 48px; height: 48px; border-radius: 14px; border: 0; background: var(--orange); color: var(--on-orange);
+    display: grid; place-items: center; cursor: pointer; flex: none;
+  }
+
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+  .muted { color: var(--muted); }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 16px; }
+  .section-head h2 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+
+  /* Covers */
+  .cover {
+    position: relative; border-radius: 16px; overflow: hidden; color: #fff; display: grid; place-items: center;
+    background: var(--g);
+  }
+  .cover svg { width: 44%; height: 44%; stroke-width: 1.3; opacity: .95; }
+  .cover::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 15%, rgba(255,255,255,.28), transparent 45%);
+  }
+
+  /* Overview */
+  .ov-grid { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 28px; }
+  .continue { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 34px; }
+  .cont-card {
+    display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 20px; border: 0; cursor: pointer; text-align: left;
+    background: var(--side); color: #fff; min-width: 0; transition: transform .2s;
+  }
+  .cont-card:hover { transform: translateY(-3px); }
+  .cont-card .cover { width: 74px; height: 96px; flex: none; margin-top: -26px; box-shadow: 0 10px 20px rgba(0,0,0,.25); }
+  .cont-card b { display: block; font-weight: 600; font-size: 14px; line-height: 1.3; margin-bottom: 6px; }
+  .cont-card small { opacity: .7; font-size: 11px; }
+  .mini-bar { height: 4px; border-radius: 9px; background: rgba(255,255,255,.18); margin-top: 8px; overflow: hidden; }
+  .mini-bar span { display: block; height: 100%; background: var(--orange); }
+
+  .courses { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; }
+  .course { border: 0; background: none; padding: 0; cursor: pointer; text-align: left; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+  .course .cover { width: 100%; }
+  .course .cover { aspect-ratio: 3 / 4; box-shadow: 0 12px 24px rgba(0,0,0,.14); transition: transform .2s; }
+  .course:hover .cover { transform: translateY(-4px); }
+  .course b { display: block; font-weight: 600; margin-top: 12px; line-height: 1.3; }
+  .course small { display: block; color: var(--muted); font-size: 12px; margin: 2px 0 8px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; background: var(--soft); border-radius: 6px; padding: 3px 8px; }
+  .tag.on { background: var(--orange-soft); color: var(--ink); }
+
+  .side-panel { background: var(--soft); border-radius: var(--radius); padding: 22px; align-self: start; }
+  .side-panel h3 { margin: 0 0 16px; font-size: 16px; font-weight: 600; }
+  .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+  .stat-ico { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--orange); flex: none; }
+  .stat-row b { display: block; font-size: 18px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .stat-row small { color: var(--muted); font-size: 12px; }
+  .ring { margin: 6px auto 4px; width: 140px; height: 140px; position: relative; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); stroke-width: 10; }
+  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 26px; font-weight: 700; }
+  .ring-cap { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
 
   /* Detail */
-  .detail { display: none; }
-  .detail.show { display: block; }
-  .back { background: none; border: 0; padding: 0; cursor: pointer; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
-  .hero { border-radius: var(--radius); padding: 28px; margin-bottom: 18px; }
-  .hero h2 { font-size: clamp(26px, 3.5vw, 38px); letter-spacing: -0.03em; margin: 8px 0 8px; line-height: 1.05; }
-  .hero-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
-  .hero-meta select { background: var(--surface); border: 0; border-radius: 999px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
-  .pill { background: var(--surface); border-radius: 999px; padding: 8px 12px; font-weight: 700; font-size: 13px; }
-  .grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
-  .panel { background: var(--surface); border-radius: var(--radius); padding: 22px; }
-  .panel h4 { margin: 0 0 12px; font-size: 16px; font-weight: 800; }
-  .modules { list-style: none; margin: 0; padding: 0; }
-  .modules li { border-top: 1px solid var(--line); }
-  .modules li:first-child { border-top: 0; }
-  .modules label { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; cursor: pointer; }
-  .modules input { width: 20px; height: 20px; accent-color: var(--accent); margin: 1px 0 0; flex: none; }
-  .modules .m-title { font-weight: 700; }
-  .modules .m-desc { color: var(--muted); font-size: 13px; }
-  .modules input:checked ~ div .m-title { text-decoration: line-through; color: var(--muted); }
-  textarea { width: 100%; min-height: 160px; border: 1px solid var(--line); background: var(--bg); border-radius: 14px; padding: 12px; resize: vertical; }
-  .facts { display: grid; gap: 10px; margin-bottom: 18px; }
-  .facts div { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
-  .facts span:first-child { color: var(--muted); }
-  .facts span:last-child { font-weight: 700; text-align: right; }
+  .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; }
+  .hero { aspect-ratio: 16 / 7.5; border-radius: 20px; display: block; place-items: unset; }
+  .hero .hero-icon { position: absolute; right: 7%; top: 50%; transform: translateY(-58%); width: 34%; height: auto; aspect-ratio: 1; opacity: .9; stroke-width: 1; }
+  .hero .hero-text { position: absolute; left: 6%; top: 14%; max-width: 55%; z-index: 1; }
+  .hero .hero-text span { font-size: 12px; background: rgba(255,255,255,.18); padding: 4px 10px; border-radius: 99px; }
+  .hero .hero-text h2 { font-size: clamp(20px, 2.6vw, 32px); line-height: 1.15; margin: 12px 0 0; font-weight: 600; letter-spacing: -0.02em; }
+  .player {
+    position: absolute; left: 6%; right: 6%; bottom: 7%; z-index: 1;
+    display: flex; align-items: center; gap: 12px; background: rgba(20,20,20,.55); backdrop-filter: blur(6px);
+    border-radius: 10px; padding: 8px 14px; font-size: 12px;
+  }
+  .player svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
+  .player .track { flex: 1; height: 16px; border-radius: 4px; background: rgba(255,255,255,.18); overflow: hidden; }
+  .player .track span { display: flex; align-items: center; padding-left: 8px; height: 100%; background: var(--orange); color: var(--on-orange); font-weight: 600; font-size: 10px; white-space: nowrap; }
 
-  @media (max-width: 1000px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .card:nth-child(n) { grid-column: span 3; }
-    .grid2 { grid-template-columns: 1fr; }
+  .now { display: flex; align-items: center; gap: 14px; padding: 22px 0 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .now .badge-ico { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--orange); display: grid; place-items: center; color: var(--orange); font-weight: 700; flex: none; }
+  .now h3 { margin: 0; font-size: 19px; font-weight: 500; }
+  .now small { color: var(--muted); }
+  .now .actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .now select { background: var(--orange-soft); border: 0; border-radius: 10px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
+  .about { color: var(--muted); font-size: 13px; padding-top: 16px; }
+  .facts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .fact { background: var(--soft); border-radius: 12px; padding: 10px 14px; font-size: 12px; }
+  .fact b { display: block; color: var(--ink); font-size: 13px; font-weight: 600; }
+  .notes { margin-top: 20px; }
+  .notes h4 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+  textarea { width: 100%; min-height: 130px; border: 0; background: var(--soft); border-radius: 14px; padding: 14px; resize: vertical; outline-color: var(--orange); }
+
+  .lessons-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .lessons-head h2 { margin: 0; font-size: 22px; font-weight: 500; }
+  .lessons { list-style: none; margin: 0; padding: 0; }
+  .lesson {
+    width: 100%; display: flex; gap: 14px; align-items: center; border: 0; background: none; cursor: pointer; text-align: left;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .l-ico { width: 44px; height: 44px; border-radius: 12px; background: var(--orange); color: var(--on-orange); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .lesson.done .l-ico { background: var(--side); color: var(--orange); }
+  .lesson.done .l-title { text-decoration: line-through; color: var(--muted); }
+  .l-title { font-weight: 500; line-height: 1.3; }
+  .lesson small { color: var(--muted); font-size: 12px; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+  .tile { border-radius: 20px; padding: 18px 14px; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; }
+  .tile b { font-size: 26px; font-weight: 700; color: var(--orange); }
+  .tile small { color: var(--muted); font-size: 12px; }
+  .tile.a { background: var(--orange-soft); }
+  .tile.b { background: var(--soft); }
+  .back { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; margin-bottom: 14px; display: inline-flex; gap: 6px; align-items: center; }
+  .back svg { width: 16px; height: 16px; }
+  .empty { color: var(--muted); padding: 20px 0; }
+
+  @media (max-width: 1150px) {
+    .ov-grid, .detail-grid { grid-template-columns: minmax(0, 1fr); }
+    .courses { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .side-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 18px; }
+    .side-panel h3, .side-panel .ring, .side-panel .ring-cap { grid-column: 1 / -1; }
   }
   @media (max-width: 760px) {
-    .app { grid-template-columns: minmax(0, 1fr); }
-    aside, nav { min-width: 0; }
-    aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; gap: 14px; }
-    nav { flex-direction: row; overflow-x: auto; }
-    nav button { white-space: nowrap; width: auto; }
-    .side-foot { display: none; }
-    main { padding: 20px 16px 40px; }
-    .card:nth-child(n) { grid-column: span 6; }
-    .stat-value { font-size: 28px; }
+    body { padding: 0; }
+    body::before { display: none; }
+    .shell { padding: 0; border-radius: 0; box-shadow: none; background: none; }
+    .app { grid-template-columns: minmax(0, 1fr); border-radius: 0; min-height: 100vh; }
+    aside { flex-direction: row; padding: 10px 16px; gap: 8px; overflow-x: auto; }
+    .avatar { margin: 0 6px 0 0; width: 40px; height: 40px; font-size: 16px; }
+    nav { flex-direction: row; gap: 6px; }
+    .nav-btn .tip { display: none; }
+    .side-bottom { margin: 0 0 0 auto; }
+    main { padding: 20px 16px 36px; }
+    .brand { display: none; }
+    .continue { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-top: 26px; }
+    .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .side-panel { grid-template-columns: 1fr; }
+    .hero { aspect-ratio: 4 / 3.4; }
+    .hero .hero-text { max-width: 80%; }
+    .hero .hero-icon { width: 40%; right: 5%; top: 56%; opacity: .5; }
+    .now .actions { margin-left: 0; width: 100%; }
   }
 </style>
 </head>
 <body>
-<div class="app">
-  <aside>
-    <div class="logo"><div class="logo-mark">P</div>Piko AI</div>
-    <nav id="nav"></nav>
-    <div class="side-foot">
-      Личный кабинет автора. Прогресс и заметки хранятся в этом браузере.
-      <button class="theme-btn" id="themeBtn">Сменить тему</button>
-    </div>
-  </aside>
-
-  <main>
-    <section id="overview">
-      <div class="top">
-        <div>
-          <h1>Мои ИИ-курсы</h1>
-          <div class="sub">Пять программ — от первых шагов до собственных агентов.</div>
-        </div>
-        <div class="date-chip" id="today"></div>
+<div class="shell">
+  <div class="app">
+    <aside>
+      <div class="avatar" title="Автор">P</div>
+      <nav id="nav"></nav>
+      <div class="side-bottom">
+        <button class="nav-btn" id="themeBtn" aria-label="Сменить тему">
+          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <span class="tip">Сменить тему</span>
+        </button>
       </div>
+    </aside>
 
-      <div class="stats" id="stats"></div>
-
-      <h2 class="section-title">Курсы</h2>
-      <div class="bento" id="bento"></div>
-    </section>
-
-    <section class="detail" id="detail"></section>
-  </main>
+    <main>
+      <div class="topbar">
+        <div class="brand">Piko AI<i>.</i></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Поиск по курсам и модулям…">
+        </label>
+        <button class="icon-btn" data-go="" aria-label="Дашборд">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        </button>
+      </div>
+      <div id="view"></div>
+    </main>
+  </div>
 </div>
 
 <script>
+const ICONS = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  megaphone: '<path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M8 14l1.5 5h2.5"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z"/><path d="M4 20a2 2 0 0 0 2 2h13v-4"/><path d="M9 8h6"/>',
+  code: '<path d="m8 8-5 4 5 4"/><path d="m16 8 5 4-5 4"/><path d="m14 4-4 16"/>',
+  bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4"/><circle cx="12" cy="3" r="1"/><circle cx="9" cy="14" r="1.2"/><circle cx="15" cy="14" r="1.2"/><path d="M2 13v3M22 13v3"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  check: '<path d="m5 12 4 4 10-10"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  rocket: '<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M9 15l-3-3c2-5 6-9 13-9 0 7-4 11-9 13z"/><circle cx="15" cy="9" r="1.5"/>',
+  back: '<path d="M15 6l-6 6 6 6"/>'
+};
+const svg = (name, extra = "") => `<svg viewBox="0 0 24 24" ${extra}>${ICONS[name]}</svg>`;
+
 const COURSES = [
   {
-    id: "seniors", nav: "Старшее поколение", color: "--c1", title: "ИИ для старшего поколения",
+    id: "seniors", icon: "heart", nav: "Старшее поколение", title: "ИИ для старшего поколения",
+    g: "linear-gradient(140deg, #ffb347 0%, #ff9900 45%, #c25e00 100%)",
     short: "Спокойно и понятно: голосовые помощники, ChatGPT в быту, защита от мошенников.",
     audience: "Люди 55+", format: "Офлайн / Zoom, малые группы", duration: "4 недели",
     modules: [
@@ -197,7 +287,8 @@ const COURSES = [
     ]
   },
   {
-    id: "marketing", nav: "Маркетинг и SMM", color: "--c2", title: "ИИ для маркетинга, SMM и медиа",
+    id: "marketing", icon: "megaphone", nav: "Маркетинг и SMM", title: "ИИ для маркетинга, SMM и медиа",
+    g: "linear-gradient(150deg, #2b2b2b 0%, #141414 55%, #ff9900 140%)",
     short: "Контент-завод: тексты, визуал, видео, аналитика и автоматизация.",
     audience: "Маркетологи, SMM, журналисты", format: "Онлайн + практикум", duration: "6 недель",
     modules: [
@@ -210,7 +301,8 @@ const COURSES = [
     ]
   },
   {
-    id: "teachers", nav: "Педагоги", color: "--c3", title: "ИИ для педагогов",
+    id: "teachers", icon: "book", nav: "Педагоги", title: "ИИ для педагогов",
+    g: "linear-gradient(140deg, #ffd08a 0%, #ffa726 50%, #e07b00 100%)",
     short: "Как готовить уроки, задания и обратную связь быстрее — и этично.",
     audience: "Учителя, преподаватели вузов", format: "Онлайн, вебинары", duration: "5 недель",
     modules: [
@@ -223,7 +315,8 @@ const COURSES = [
     ]
   },
   {
-    id: "it", nav: "IT-студенты", color: "--c4", title: "ИИ для IT-студентов",
+    id: "it", icon: "code", nav: "IT-студенты", title: "ИИ для IT-студентов",
+    g: "linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 50%, #000 100%)",
     short: "LLM, API, RAG и ассистенты кода — с собственным проектом на выходе.",
     audience: "Студенты IT-направлений", format: "Онлайн, код-ревью", duration: "8 недель",
     modules: [
@@ -236,7 +329,8 @@ const COURSES = [
     ]
   },
   {
-    id: "agents", nav: "ИИ-агенты", color: "--c5", title: "ИИ-агенты",
+    id: "agents", icon: "bot", nav: "ИИ-агенты", title: "ИИ-агенты",
+    g: "linear-gradient(140deg, #ff9900 0%, #d35400 45%, #141414 100%)",
     short: "Агенты, инструменты, память и автоматизация процессов — code и no-code.",
     audience: "Продвинутые пользователи, разработчики", format: "Онлайн + интенсив", duration: "6 недель",
     modules: [
@@ -250,6 +344,7 @@ const COURSES = [
   }
 ];
 const STATUSES = ["Идея", "В разработке", "Готов", "Идёт набор", "Идёт поток"];
+const LIVE = ["Готов", "Идёт набор", "Идёт поток"];
 
 const KEY = "piko-ai-dashboard-v1";
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
@@ -259,89 +354,141 @@ function cs(id) {
   state[id] ??= { done: [], status: "В разработке", notes: "" };
   return state[id];
 }
-function progress(c) { return Math.round(cs(c.id).done.length / c.modules.length * 100); }
+const progress = (c) => Math.round(cs(c.id).done.length / c.modules.length * 100);
+const nextIdx = (c) => { const i = c.modules.findIndex((_, i) => !cs(c.id).done.includes(i)); return i < 0 ? c.modules.length - 1 : i; };
 
 const $ = (s) => document.querySelector(s);
-const esc = (s) => s.replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+let query = "";
 
 function renderNav(active) {
-  $("#nav").innerHTML =
-    `<button data-go="" class="${!active ? "active" : ""}">▦ Дашборд</button>` +
-    COURSES.map((c) => `<button data-go="${c.id}" class="${active === c.id ? "active" : ""}">
-      <span class="dot" style="background:var(${c.color})"></span>${esc(c.nav)}</button>`).join("");
+  const btn = (id, icon, label) =>
+    `<button class="nav-btn ${active === id ? "active" : ""}" data-go="${id}" aria-label="${esc(label)}">${svg(icon)}<span class="tip">${esc(label)}</span></button>`;
+  $("#nav").innerHTML = btn("", "grid", "Дашборд") + COURSES.map((c) => btn(c.id, c.icon, c.nav)).join("");
+}
+
+function matches(c) {
+  if (!query) return true;
+  const hay = [c.title, c.short, c.audience, ...c.modules.flat()].join(" ").toLowerCase();
+  return hay.includes(query);
 }
 
 function renderOverview() {
   const totalMods = COURSES.reduce((a, c) => a + c.modules.length, 0);
   const doneMods = COURSES.reduce((a, c) => a + cs(c.id).done.length, 0);
-  const ready = COURSES.filter((c) => ["Готов", "Идёт набор", "Идёт поток"].includes(cs(c.id).status)).length;
-  $("#stats").innerHTML = `
-    <div class="stat dark"><div class="stat-label">Курсов</div><div class="stat-value">${COURSES.length}</div></div>
-    <div class="stat"><div class="stat-label">Модулей готово</div><div class="stat-value">${doneMods}/${totalMods}</div></div>
-    <div class="stat"><div class="stat-label">Общий прогресс</div><div class="stat-value">${Math.round(doneMods / totalMods * 100)}%</div></div>
-    <div class="stat"><div class="stat-label">Готовы к запуску</div><div class="stat-value">${ready}</div></div>`;
-  $("#bento").innerHTML = COURSES.map((c, i) => {
-    const p = progress(c);
-    return `<button class="card" data-go="${c.id}" style="background:var(${c.color})">
-      <div class="card-head"><span class="num">0${i + 1}</span><span class="badge">${esc(cs(c.id).status)}</span></div>
-      <h3>${esc(c.title)}</h3>
-      <p>${esc(c.short)}</p>
-      <div class="card-foot">
-        <div class="prog-row"><span>${cs(c.id).done.length} из ${c.modules.length} модулей</span><span>${p}%</span></div>
-        <div class="bar"><span style="width:${p}%"></span></div>
+  const pct = Math.round(doneMods / totalMods * 100);
+  const live = COURSES.filter((c) => LIVE.includes(cs(c.id).status)).length;
+  const list = COURSES.filter(matches);
+  const recent = [...list].sort((a, b) => progress(b) - progress(a)).slice(0, 3);
+  const C = 2 * Math.PI * 44;
+
+  $("#view").innerHTML = `
+    <div class="ov-grid">
+      <div>
+        <div class="section-head"><h2>Продолжить работу</h2></div>
+        ${list.length ? `<div class="continue">${recent.map((c) => `
+          <button class="cont-card" data-go="${c.id}">
+            <div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>
+            <div style="min-width:0;flex:1">
+              <b>${esc(c.title)}</b>
+              <small>Модуль ${nextIdx(c) + 1} из ${c.modules.length} · ${esc(cs(c.id).status)}</small>
+              <div class="mini-bar"><span style="width:${progress(c)}%"></span></div>
+            </div>
+          </button>`).join("")}</div>` : `<div class="empty">Ничего не найдено по запросу «${esc(query)}».</div>`}
+
+        <div class="section-head"><h2>Все курсы</h2><span class="muted">${list.length} из ${COURSES.length}</span></div>
+        <div class="courses">${list.map((c) => `
+          <button class="course" data-go="${c.id}">
+            <div class="cover" style="--g:${c.g}">${svg(c.icon)}</div>
+            <b>${esc(c.title)}</b>
+            <small>${esc(c.audience)}</small>
+            <span class="tag ${LIVE.includes(cs(c.id).status) ? "on" : ""}">${esc(cs(c.id).status)}</span>
+          </button>`).join("")}</div>
       </div>
-    </button>`;
-  }).join("");
+
+      <div class="side-panel">
+        <h3>Статистика</h3>
+        <div class="ring">
+          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="var(--line)"/><circle cx="50" cy="50" r="44" stroke="var(--orange)" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg>
+          <div class="num">${pct}%</div>
+        </div>
+        <div class="ring-cap">общий прогресс</div>
+        <div class="stat-row"><div class="stat-ico">${svg("layers")}</div><div><b>${COURSES.length}</b><small>курсов</small></div></div>
+        <div class="stat-row"><div class="stat-ico">${svg("check")}</div><div><b>${doneMods}/${totalMods}</b><small>модулей готово</small></div></div>
+        <div class="stat-row"><div class="stat-ico">${svg("rocket")}</div><div><b>${live}</b><small>готовы к запуску</small></div></div>
+      </div>
+    </div>`;
 }
 
 function renderDetail(c) {
-  const s = cs(c.id), p = progress(c), idx = COURSES.indexOf(c);
-  $("#detail").innerHTML = `
-    <button class="back" data-go="">← Все курсы</button>
-    <div class="hero" style="background:var(${c.color})">
-      <span class="num">Курс 0${idx + 1}</span>
-      <h2>${esc(c.title)}</h2>
-      <div>${esc(c.short)}</div>
-      <div class="hero-meta">
-        <select id="status" aria-label="Статус">${STATUSES.map((x) => `<option ${x === s.status ? "selected" : ""}>${x}</option>`).join("")}</select>
-        <span class="pill">${p}% готово</span>
-      </div>
-    </div>
-    <div class="grid2">
-      <div class="panel">
-        <h4>Программа курса</h4>
-        <ul class="modules">${c.modules.map(([t, d], i) => `
-          <li><label><input type="checkbox" data-mod="${i}" ${s.done.includes(i) ? "checked" : ""}>
-            <div><div class="m-title">${i + 1}. ${esc(t)}</div><div class="m-desc">${esc(d)}</div></div></label></li>`).join("")}
-        </ul>
-      </div>
-      <div class="panel">
-        <h4>О курсе</h4>
-        <div class="facts">
-          <div><span>Аудитория</span><span>${esc(c.audience)}</span></div>
-          <div><span>Формат</span><span>${esc(c.format)}</span></div>
-          <div><span>Длительность</span><span>${esc(c.duration)}</span></div>
+  const s = cs(c.id), p = progress(c), n = nextIdx(c), idx = COURSES.indexOf(c);
+  const weeks = parseInt(c.duration) || 0;
+  $("#view").innerHTML = `
+    <button class="back" data-go="">${svg("back")} Все курсы</button>
+    <div class="detail-grid">
+      <div>
+        <h1 style="margin-bottom:18px">Курс — ${esc(c.title)}</h1>
+        <div class="cover hero" style="--g:${c.g}">
+          <div class="hero-text"><span>Курс 0${idx + 1}</span><h2>${esc(c.short)}</h2></div>
+          ${svg(c.icon, 'class="hero-icon"')}
+          <div class="player">
+            <svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>
+            <div class="track"><span style="width:${Math.max(p, 14)}%">${s.done.length} / ${c.modules.length}</span></div>
+            <span>${p}%</span>
+          </div>
         </div>
-        <h4>Заметки</h4>
-        <textarea id="notes" placeholder="Идеи, ссылки, материалы…">${esc(s.notes)}</textarea>
+
+        <div class="now">
+          <div class="badge-ico">${n + 1}</div>
+          <div>
+            <h3>Модуль ${n + 1} — ${esc(c.modules[n][0])}</h3>
+            <small>${esc(c.modules[n][1])}</small>
+          </div>
+          <div class="actions">
+            <select id="status" aria-label="Статус курса">${STATUSES.map((x) => `<option ${x === s.status ? "selected" : ""}>${x}</option>`).join("")}</select>
+          </div>
+        </div>
+        <div class="about">
+          Программа на ${c.modules.length} модулей. Отмечайте модули справа по мере готовности материалов — прогресс сохранится автоматически.
+          <div class="facts">
+            <div class="fact">Аудитория<b>${esc(c.audience)}</b></div>
+            <div class="fact">Формат<b>${esc(c.format)}</b></div>
+            <div class="fact">Длительность<b>${esc(c.duration)}</b></div>
+          </div>
+        </div>
+        <div class="notes">
+          <h4>Заметки</h4>
+          <textarea id="notes" placeholder="Идеи, ссылки, материалы…">${esc(s.notes)}</textarea>
+        </div>
+      </div>
+
+      <div>
+        <div class="lessons-head"><h2>Модули</h2><span class="muted">${s.done.length}/${c.modules.length}</span></div>
+        <ul class="lessons">${c.modules.map(([t], i) => `
+          <li><button class="lesson ${s.done.includes(i) ? "done" : ""}" data-mod="${i}" aria-pressed="${s.done.includes(i)}">
+            <span class="l-ico">${s.done.includes(i) ? svg("check") : i + 1}</span>
+            <span><span class="l-title">${esc(t)}</span><br><small>Модуль ${i + 1} · ${s.done.includes(i) ? "готов" : "в работе"}</small></span>
+          </button></li>`).join("")}
+        </ul>
+        <div class="tiles">
+          <div class="tile a"><b>${p}%</b><small>готово</small></div>
+          <div class="tile b"><b>${weeks}</b><small>недель</small></div>
+        </div>
       </div>
     </div>`;
   $("#status").onchange = (e) => { s.status = e.target.value; save(); };
   $("#notes").oninput = (e) => { s.notes = e.target.value; save(); };
-  document.querySelectorAll("[data-mod]").forEach((el) => el.onchange = () => {
+  document.querySelectorAll("[data-mod]").forEach((el) => el.onclick = () => {
     const i = +el.dataset.mod;
-    s.done = el.checked ? [...new Set([...s.done, i])] : s.done.filter((x) => x !== i);
+    s.done = s.done.includes(i) ? s.done.filter((x) => x !== i) : [...s.done, i];
     save();
-    $(".pill").textContent = progress(c) + "% готово";
+    const y = scrollY; renderDetail(c); scrollTo(0, y);
   });
 }
 
 function route() {
-  const id = location.hash.slice(1);
-  const c = COURSES.find((x) => x.id === id);
-  renderNav(c?.id);
-  $("#overview").style.display = c ? "none" : "";
-  $("#detail").classList.toggle("show", !!c);
+  const c = COURSES.find((x) => x.id === location.hash.slice(1));
+  renderNav(c ? c.id : "");
   c ? renderDetail(c) : renderOverview();
   window.scrollTo(0, 0);
 }
@@ -351,8 +498,10 @@ document.addEventListener("click", (e) => {
   if (go) location.hash = go.dataset.go;
 });
 window.addEventListener("hashchange", route);
-
-$("#today").textContent = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+$("#q").addEventListener("input", (e) => {
+  query = e.target.value.trim().toLowerCase();
+  if (location.hash.length > 1) location.hash = ""; else renderOverview();
+});
 
 const root = document.documentElement;
 try { const t = localStorage.getItem(KEY + "-theme"); if (t) root.dataset.theme = t; } catch {}
